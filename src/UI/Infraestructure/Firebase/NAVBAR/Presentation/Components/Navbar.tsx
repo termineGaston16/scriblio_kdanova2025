@@ -14,8 +14,8 @@ export default function Navbar() {
     return (
         <nav>
             <BsFillInfoCircleFill
-                onMouseOver={() => setShowInfoNavbar(true)}
-                onMouseOut={() => setShowInfoNavbar(false)}
+                onMouseEnter={() => setShowInfoNavbar(true)}
+                onMouseLeave={() => setShowInfoNavbar(false)}
             />
 
             {showInfoNavbar &&
