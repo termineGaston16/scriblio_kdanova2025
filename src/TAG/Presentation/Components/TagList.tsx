@@ -3,12 +3,15 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import { FiMinusCircle } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import WarningBlockToRemove from "../../../UI/ALERTS/Presentation/Components/WarningBlockToRemove";
 
 export default function TagList() {
 
     const [showInfoCreateTag, setShowInfoCreateTag] = useState<boolean>(false);
     const [showInfoTag, setShowInfoTag] = useState<boolean>(false);
 
+    const [showOptionsTag, setShowOptionsTag] = useState<string | null>(null)
+    const [showTagDeleteWarning, setShowTagDeleteWarning] = useState<boolean>(false)
 
 
     return (
@@ -16,14 +19,14 @@ export default function TagList() {
 
             <button type="button">
                 <AiFillPlusCircle
-                    onMouseOver={() => setShowInfoCreateTag(true)}
-                    onMouseOut={() => setShowInfoCreateTag(false)}
+                    onMouseEnter={() => setShowInfoCreateTag(true)}
+                    onMouseLeave={() => setShowInfoCreateTag(false)}
                 />
             </button>
 
             <BsFillInfoCircleFill
-                onMouseOver={() => setShowInfoTag(true)}
-                onMouseOut={() => setShowInfoTag(false)}
+                onMouseEnter={() => setShowInfoTag(true)}
+                onMouseLeave={() => setShowInfoTag(false)}
             />
 
             {showInfoCreateTag &&
@@ -38,19 +41,37 @@ export default function TagList() {
                 </p>
             }
 
-            {/* Utilizar css para ocultar el boton */}
             <ul>
-                <li>
+                <li
+                    onMouseEnter={() => setShowOptionsTag('name tag')}
+                    onMouseLeave={() => setShowOptionsTag(null)}
+                >
                     <Link to={'/'}>
-                        <span>name tag</span>
+                        <span>name tag 1</span>
                     </Link>
 
-                    <button
-                        type="button">
-                        <FiMinusCircle />
-                    </button>
+                    {
+                        showOptionsTag === 'name tag' &&
+                        <button
+                            type="button"
+                            onClick={() => setShowTagDeleteWarning(true)}
+                        >
+                            <FiMinusCircle />
+                        </button>
+                    }
                 </li>
             </ul>
+
+            {
+                showTagDeleteWarning &&
+                <WarningBlockToRemove
+                    warningText={`se eliminará el Tag "name tag".`}
+                    option1Text={'cancelar'}
+                    option2Text={'eliminar'}
+                    option1Fc={() => setShowTagDeleteWarning(false)}
+                    option2Fc={() => alert('Tag borrado!')}
+                />
+            }
 
         </section>
     )
