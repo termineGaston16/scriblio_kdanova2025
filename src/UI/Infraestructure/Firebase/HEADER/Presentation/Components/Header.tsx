@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import TagList from "../../../../../../TAG/Presentation/Components/TagList";
 
 export default function Header() {
     return (
@@ -8,7 +9,7 @@ export default function Header() {
                 <h1>Scriblio</h1>
             </Link>
 
-
+            <TagList />
         </header>
     )
 }
