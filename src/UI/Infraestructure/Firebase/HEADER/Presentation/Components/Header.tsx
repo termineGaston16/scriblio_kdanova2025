@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Navbar from "../../../NAVBAR/Presentation/Components/Navbar";
+import TagList from "../../../../../../TAG/Presentation/Components/TagList";
 
 export default function Header() {
     return (
@@ -10,6 +11,7 @@ export default function Header() {
             </Link>
 
             <Navbar />
+            <TagList />
         </header>
     )
 }
