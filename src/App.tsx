@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Header from "./UI/Infraestructure/Firebase/HEADER/Presentation/Components/Header";
+import TagList from "./TAG/Presentation/Components/TagList";
 
 export default function App() {
 
@@ -7,7 +7,7 @@ export default function App() {
     return (
         <BrowserRouter>
 
-            <Header />
+            <TagList />
 
             <Routes>
                 <Route path="*" element={'Page Not Found'} />
