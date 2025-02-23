@@ -1,19 +1,30 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Header from "./UI/Infraestructure/Firebase/HEADER/Presentation/Components/Header";
+import TagList from "./TAG/Presentation/Components/TagList";
+import { QueryClient, QueryClientProvider } from "react-query";
+import React from "react";
+import { Provider } from "react-redux";
+import { store } from "./UI/Application/Redux/store/storeRedux";
 
 export default function App() {
 
+    const query = new QueryClient();
 
     return (
-        <BrowserRouter>
+        <React.StrictMode>
+            <Provider store={store}>
+                <QueryClientProvider client={query}>
+                    <BrowserRouter>
 
-            <Header />
+                        <TagList />
 
-            <Routes>
-                <Route path="*" element={'Page Not Found'} />
+                        <Routes>
+                            <Route path="*" element={'Page Not Found'} />
 
 
-            </Routes>
-        </BrowserRouter>
+                        </Routes>
+                    </BrowserRouter>
+                </QueryClientProvider>
+            </Provider>
+        </React.StrictMode>
     )
 }

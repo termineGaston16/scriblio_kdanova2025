@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Navbar from "../../../NAVBAR/Presentation/Components/Navbar";
 import TagList from "../../../../../../TAG/Presentation/Components/TagList";
 
 export default function Header() {
@@ -10,7 +9,6 @@ export default function Header() {
                 <h1>Scriblio</h1>
             </Link>
 
-            <Navbar />
             <TagList />
         </header>
     )
