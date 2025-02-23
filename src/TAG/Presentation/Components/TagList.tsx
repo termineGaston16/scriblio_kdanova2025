@@ -7,6 +7,7 @@ import WarningBlockToRemove from "../../../UI/ALERTS/Presentation/Components/War
 import { Tag_I } from "../../Domain/tag";
 import { useListTagByQuantity } from "../Hooks/useListTagByQuantity";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
+import FormToCreateNewTag from "./FormToCreateNewTag";
 
 
 export default function TagList() {
@@ -20,6 +21,8 @@ export default function TagList() {
     const [tagListLocal, setTagListLocal] = useState<Tag_I[]>([]);
     const lastItemLocalRef = useRef<string>('')
     const { data, isLoading, isError, refetch } = useListTagByQuantity(2, lastItemLocalRef.current)
+
+    const [formToCreateNewTag, setFormToCreateNewTag] = useState<boolean>(false)
 
     useEffect(() => {
         if (!data || data.length <= 0) return;
@@ -60,6 +63,7 @@ export default function TagList() {
 
             <button type="button">
                 <AiFillPlusCircle
+                    onClick={() => setFormToCreateNewTag(true)}
                     onMouseEnter={() => setShowInfoCreateTag(true)}
                     onMouseLeave={() => setShowInfoCreateTag(false)}
                 />
@@ -136,6 +140,13 @@ export default function TagList() {
                     <span>Error al obtener Tags</span>
                 }
             />
+
+            {
+                formToCreateNewTag &&
+                <FormToCreateNewTag
+                    closeForm={() => setFormToCreateNewTag(false)}
+                />
+            }
         </section >
     )
 }

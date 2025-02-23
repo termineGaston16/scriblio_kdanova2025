@@ -8,6 +8,7 @@ export default function App() {
     const query = new QueryClient();
 
     // SI NO HAY INTERNET RETORNAR OTRO COMPONENTE
+    // APLICAR LO DE CSS MODO OSCURO AUTOMATICO
 
     return (
         <React.StrictMode>

@@ -38,3 +38,6 @@ export const listTagByQuantity = async (limitCount: number, lastID: string | nul
     }
 };
 
+{/* method: POST */ }
+
+
