@@ -7,6 +7,8 @@ export default function App() {
 
     const query = new QueryClient();
 
+    // SI NO HAY INTERNET RETORNAR OTRO COMPONENTE
+
     return (
         <React.StrictMode>
             <QueryClientProvider client={query}>
