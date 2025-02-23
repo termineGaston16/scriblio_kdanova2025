@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./UI/Application/Redux/store/storeRedux";
+import { ListLocalProvider } from "./TAG/Presentation/Context/listLocalContext";
 
 export default function App() {
 
@@ -15,7 +16,10 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        <TagList />
+                        <ListLocalProvider>
+                            <TagList />
+                        </ListLocalProvider>
+
 
                         <Routes>
                             <Route path="*" element={'Page Not Found'} />

@@ -4,10 +4,11 @@ import { BsFillInfoCircleFill } from "react-icons/bs";
 import { FiMinusCircle } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import WarningBlockToRemove from "../../../UI/ALERTS/Presentation/Components/WarningBlockToRemove";
-import { Tag_I } from "../../Domain/tag";
 import { useListTagByQuantity } from "../Hooks/useListTagByQuantity";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
 import FormToCreateNewTag from "./FormToCreateNewTag";
+import { useListLocalContext } from "../Context/listLocalContext";
+import { Toaster } from "sonner";
 
 
 export default function TagList() {
@@ -18,9 +19,9 @@ export default function TagList() {
     const [showOptionsTag, setShowOptionsTag] = useState<string | null>(null)
     const [showTagDeleteWarning, setShowTagDeleteWarning] = useState<boolean>(false)
 
-    const [tagListLocal, setTagListLocal] = useState<Tag_I[]>([]);
+    const { tagListLocal, setTagListLocal } = useListLocalContext()
     const lastItemLocalRef = useRef<string>('')
-    const { data, isLoading, isError, refetch } = useListTagByQuantity(2, lastItemLocalRef.current)
+    const { data, isLoading, isError, refetch } = useListTagByQuantity(lastItemLocalRef.current)
 
     const [formToCreateNewTag, setFormToCreateNewTag] = useState<boolean>(false)
 
@@ -147,6 +148,8 @@ export default function TagList() {
                     closeForm={() => setFormToCreateNewTag(false)}
                 />
             }
+
+            <Toaster position="bottom-right" />
         </section >
     )
 }
