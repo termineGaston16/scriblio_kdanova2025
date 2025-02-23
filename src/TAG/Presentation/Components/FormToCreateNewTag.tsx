@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { validateCreateNewTag } from "../../Application/tagApp";
+import { useAppDispatch, useAppSelector } from "../../../UI/Application/Redux/hooks/hooks";
 
 interface Props {
     closeForm: () => void
@@ -7,15 +8,19 @@ interface Props {
 
 const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
 
+    const messageAlert = useAppSelector((state) => state.alertMessage);
+    const dispatch = useAppDispatch();
+
+    const [messageInfo, setMessageInfo] = useState<string | null>(null);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const titleTag = new FormData(e.currentTarget).get('nameNewTag') as string;
         const colorTag = new FormData(e.currentTarget).get('colorTag') as string;
 
-        validateCreateNewTag(titleTag, colorTag)
+        validateCreateNewTag(titleTag, colorTag, dispatch)
     };
-    const [messageInfo, setMessageInfo] = useState<string | null>(null)
+
 
     return (
         <form onSubmit={handleSubmit}>
@@ -47,6 +52,10 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
                 onMouseEnter={() => setMessageInfo(`*asigna un color para representar el Tag. `)}
             />
 
+            {
+                messageAlert &&
+                <p style={{ whiteSpace: "pre-line" }}>(*ERROR: ) {messageAlert}</p>
+            }
             {
                 messageInfo &&
                 <p style={{ whiteSpace: "pre-line" }}>(i) {messageInfo}</p>

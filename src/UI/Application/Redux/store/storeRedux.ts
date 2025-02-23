@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import alertMessageSlice from "../slice/alertMessageSlice";
 
 export const store = configureStore({
     reducer: {
-
+        alertMessage: alertMessageSlice
     },
 });
 
