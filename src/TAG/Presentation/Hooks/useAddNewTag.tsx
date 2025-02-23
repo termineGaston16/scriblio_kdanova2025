@@ -28,16 +28,16 @@ export const useAddNewTag = () => {
             ]);
 
         },
-        onError: (newTag: NewTagData) => {
+        onError: () => {
             setTagListLocal(prevList => {
                 if (prevList.length > 0) return prevList.slice(1);
                 return prevList;
             });
 
-            toast(<div>{newTag.title} no fue posible crearlo</div>)
+            toast(<div>no fue posible crearlo</div>)
         },
-        onSuccess: () => {
-            toast(<div>Tag creado con éxito!</div>)
+        onSuccess: (response) => {
+            if (typeof response !== 'string') toast(<div>creado con éxito!</div>)
         }
     });
 };

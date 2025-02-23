@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
 import { Tag_I } from "../Domain/tag";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { DataBaseError, DataBaseSystemFailure } from "./tagError";
@@ -38,7 +38,6 @@ export const listTagByQuantity = async (lastID: string | null): Promise<Tag_I[]>
     }
 };
 
-
 {/* method: POST */ }
 export const addNewTag = async (title: string, colorTag: string, id: string): Promise<string | null> => {
     try {
@@ -67,3 +66,13 @@ export const addNewTag = async (title: string, colorTag: string, id: string): Pr
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 };
+
+{/* method: DELETE */ }
+export const removeTag = async (id: string): Promise<void> => {
+    try {
+
+    } catch (error) {
+
+    }
+}
+

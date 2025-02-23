@@ -59,7 +59,7 @@ export default function TagList() {
         observerRef.current.observe(node);
     }, []);
 
-    return (
+    return (<>
         <section>
 
             <button type="button">
@@ -118,38 +118,39 @@ export default function TagList() {
                     })
                 }
             </ul>
-
-            {
-                showTagDeleteWarning &&
-                <WarningBlockToRemove
-                    warningText={`se eliminará el Tag ${showOptionsTag}.`}
-                    option1Text={'cancelar'}
-                    option2Text={'eliminar'}
-                    option1Fc={() => setShowTagDeleteWarning(false)}
-                    option2Fc={() => alert(`Tag ${showOptionsTag} borrado!`)}
-                />
-            }
-
-
-            <AsynchronousResponse
-                isLoading={isLoading}
-                isError={isError}
-                loadingComponent={
-                    <span>Cargando Tags...</span>
-                }
-                errorComponent={
-                    <span>Error al obtener Tags</span>
-                }
-            />
-
-            {
-                formToCreateNewTag &&
-                <FormToCreateNewTag
-                    closeForm={() => setFormToCreateNewTag(false)}
-                />
-            }
-
-            <Toaster position="bottom-right" />
         </section >
-    )
+
+
+        {
+            showTagDeleteWarning &&
+            <WarningBlockToRemove
+                warningText={`se eliminará el Tag ${showOptionsTag}.`}
+                option1Text={'cancelar'}
+                option2Text={'eliminar'}
+                option1Fc={() => setShowTagDeleteWarning(false)}
+                option2Fc={() => alert(`Tag ${showOptionsTag} borrado!`)}
+            />
+        }
+
+
+        <AsynchronousResponse
+            isLoading={isLoading}
+            isError={isError}
+            loadingComponent={
+                <span>Cargando Tags...</span>
+            }
+            errorComponent={
+                <span>Error al obtener Tags</span>
+            }
+        />
+
+        {
+            formToCreateNewTag &&
+            <FormToCreateNewTag
+                closeForm={() => setFormToCreateNewTag(false)}
+            />
+        }
+
+        <Toaster position="bottom-right" />
+    </>)
 }

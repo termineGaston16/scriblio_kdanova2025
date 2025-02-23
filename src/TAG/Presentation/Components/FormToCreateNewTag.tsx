@@ -15,7 +15,7 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
 
     const [messageInfo, setMessageInfo] = useState<string | null>(null);
 
-    const { mutate, isSuccess } = useAddNewTag()
+    const { mutate, isSuccess, data } = useAddNewTag()
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -30,10 +30,10 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
     };
 
     useEffect(() => {
-        if (isSuccess) closeForm();
+        if (isSuccess && !data) closeForm();
     }, [isSuccess])
 
-    return (
+    return (<>
         <form onSubmit={handleSubmit}>
             <button
                 type="button"
@@ -73,7 +73,17 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
             }
             <button type="submit">Crear</button>
         </form>
-    )
+
+        {
+            data &&
+            <div>
+                {data}
+                <button
+                    onClick={() => closeForm()}
+                    type="button">Okey</button>
+            </div>
+        }
+    </>)
 };
 
 export default FormToCreateNewTag;
