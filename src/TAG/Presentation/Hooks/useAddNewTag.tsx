@@ -37,7 +37,7 @@ export const useAddNewTag = () => {
             toast(<div>no fue posible crearlo</div>)
         },
         onSuccess: (response) => {
-            if (typeof response !== 'string') toast(<div>creado con éxito!</div>)
+            if (typeof response === 'boolean' && response) toast(<div>creado con éxito!</div>)
         }
     });
 };

@@ -7,8 +7,14 @@ import { useRef } from "react";
 interface Props {
     tagListLocal: Tag_I[];
     lastItem: (node: HTMLElement | null) => void;
-    showOptionsTag: string | null;
-    setShowOptionsTag: React.Dispatch<React.SetStateAction<string | null>>;
+    showOptionsTag: {
+        id: string;
+        name: string;
+    } | null;
+    setShowOptionsTag: React.Dispatch<React.SetStateAction<{
+        id: string;
+        name: string;
+    } | null>>;
     setShowTagDeleteWarning: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -24,7 +30,7 @@ const Tags: React.FC<Props> = ({
     const rowVirtualizer = useVirtualizer({
         count: tagListLocal.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 100, // Altura de cada elemento,
+        estimateSize: () => 100, // Altura de cada elemento,    
     });
 
     return (
@@ -55,7 +61,10 @@ const Tags: React.FC<Props> = ({
                         <li
                             ref={isLast ? lastItem : null}
                             key={id}
-                            onMouseEnter={() => setShowOptionsTag(id)}
+                            onMouseEnter={() => setShowOptionsTag({
+                                id: id,
+                                name: title
+                            })}
                             style={{
                                 position: "absolute", // 📌 Posiciona los elementos correctamente
                                 top: 0,
@@ -76,7 +85,7 @@ const Tags: React.FC<Props> = ({
                                 </span>
                             </Link>
 
-                            {showOptionsTag === id && (
+                            {showOptionsTag?.id === id && (
                                 <button
                                     type="button"
                                     onClick={() => setShowTagDeleteWarning(true)}

@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
 import { Tag_I } from "../Domain/tag";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { DataBaseError, DataBaseSystemFailure } from "./tagError";
@@ -40,7 +40,7 @@ export const listTagByQuantity = async (lastID: string | null): Promise<Tag_I[]>
 };
 
 {/* method: POST */ }
-export const addNewTag = async (title: string, colorTag: string, id: string): Promise<string | null> => {
+export const addNewTag = async (title: string, colorTag: string, id: string): Promise<string | true> => {
     try {
         if (!db) throw new DataBaseError("The database is not initialized.");
         const tagsCollection = collection(db, "TAGS");
@@ -59,7 +59,7 @@ export const addNewTag = async (title: string, colorTag: string, id: string): Pr
             notesInThisTag: []
         } as Tag_I);
 
-        return null;
+        return true;
 
     } catch (error) {
         if (error instanceof DataBaseError) throw error;
@@ -69,11 +69,17 @@ export const addNewTag = async (title: string, colorTag: string, id: string): Pr
 };
 
 {/* method: DELETE */ }
-export const removeTag = async (id: string): Promise<void> => {
+export const removeTag = async (id: string): Promise<void | true> => {
     try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
 
+        await deleteDoc(doc(db, "TAGS", id));
+
+        return true;
     } catch (error) {
+        if (error instanceof DataBaseError) throw error;
 
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 }
 

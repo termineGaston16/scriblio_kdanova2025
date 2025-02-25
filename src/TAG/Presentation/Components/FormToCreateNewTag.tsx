@@ -30,7 +30,7 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
     };
 
     useEffect(() => {
-        if (isSuccess && !data) closeForm();
+        if (isSuccess && typeof data === 'boolean' && data) closeForm();
     }, [isSuccess])
 
     return (<>

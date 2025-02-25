@@ -8,6 +8,7 @@ import FormToCreateNewTag from "./FormToCreateNewTag";
 import { useListLocalContext } from "../Context/listLocalContext";
 import { Toaster } from "sonner";
 import Tags from "./Tags";
+import { useRemoveTag } from "../Hooks/useRemoveTag";
 
 
 export default function TagList() {
@@ -15,14 +16,19 @@ export default function TagList() {
     const [showInfoCreateTag, setShowInfoCreateTag] = useState<boolean>(false);
     const [showInfoTag, setShowInfoTag] = useState<boolean>(false);
 
-    const [showOptionsTag, setShowOptionsTag] = useState<string | null>(null)
+    const [showOptionsTag, setShowOptionsTag] = useState<{
+        id: string,
+        name: string
+    } | null>(null)
     const [showTagDeleteWarning, setShowTagDeleteWarning] = useState<boolean>(false)
 
     const { tagListLocal, setTagListLocal } = useListLocalContext()
     const lastItemLocalRef = useRef<string>('')
-    const { data, isLoading, isError, refetch } = useListTagByQuantity(lastItemLocalRef.current)
+    const { data, isLoading, isError, refetch, isFetching } = useListTagByQuantity(lastItemLocalRef.current)
 
     const [formToCreateNewTag, setFormToCreateNewTag] = useState<boolean>(false)
+
+    const { mutate } = useRemoveTag()
 
     useEffect(() => {
         if (!data || data.length <= 0) return;
@@ -99,17 +105,22 @@ export default function TagList() {
         {
             showTagDeleteWarning &&
             <WarningBlockToRemove
-                warningText={`se eliminará el Tag ${showOptionsTag}.`}
+                warningText={`se eliminará el Tag ${showOptionsTag?.name}.`}
                 option1Text={'cancelar'}
                 option2Text={'eliminar'}
                 option1Fc={() => setShowTagDeleteWarning(false)}
-                option2Fc={() => alert(`Tag ${showOptionsTag} borrado!`)}
+                option2Fc={() => {
+                    if (!showOptionsTag) return;
+
+                    mutate(showOptionsTag?.id)
+                    setShowTagDeleteWarning(false)
+                }}
             />
         }
 
 
         <AsynchronousResponse
-            isLoading={isLoading}
+            isLoading={isLoading || isFetching}
             isError={isError}
             loadingComponent={
                 <span>Cargando Tags...</span>
