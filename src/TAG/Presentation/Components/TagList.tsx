@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { FiMinusCircle } from "react-icons/fi";
-import { Link } from "react-router-dom";
 import WarningBlockToRemove from "../../../UI/ALERTS/Presentation/Components/WarningBlockToRemove";
 import { useListTagByQuantity } from "../Hooks/useListTagByQuantity";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
 import FormToCreateNewTag from "./FormToCreateNewTag";
 import { useListLocalContext } from "../Context/listLocalContext";
 import { Toaster } from "sonner";
+import Tags from "./Tags";
 
 
 export default function TagList() {
@@ -28,7 +27,7 @@ export default function TagList() {
     useEffect(() => {
         if (!data || data.length <= 0) return;
 
-        setTagListLocal(prevList => [...data.slice().reverse(), ...prevList]);
+        setTagListLocal(prevList => [...prevList, ...data]);
     }, [data]);
 
 
@@ -41,7 +40,7 @@ export default function TagList() {
             if (entries[0].isIntersecting) {
                 setTagListLocal(prevList => {
                     if (prevList.length > 0) {
-                        const lastItemInList = prevList[0]?.id;
+                        const lastItemInList = prevList[prevList.length - 1]?.id;
                         if (lastItemInList !== lastItemLocalRef.current) {
                             lastItemLocalRef.current = lastItemInList;
                             refetch();
@@ -87,37 +86,13 @@ export default function TagList() {
                 </p>
             }
 
-            <ul>
-                {
-                    tagListLocal.map((tag, index, array) => {
-                        {
-
-                            const isLast = index === array.length - 1;
-                            const { title, id } = tag
-
-                            return (<li
-                                ref={isLast ? lastItem : null}
-                                key={id}
-                                onMouseEnter={() => setShowOptionsTag(id)}
-                            >
-                                <Link to={'/'}>
-                                    <span>{title}</span>
-                                </Link>
-
-                                {
-                                    showOptionsTag === id &&
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowTagDeleteWarning(true)}
-                                    >
-                                        <FiMinusCircle />
-                                    </button>
-                                }
-                            </li>)
-                        }
-                    })
-                }
-            </ul>
+            <Tags
+                lastItem={lastItem}
+                setShowOptionsTag={setShowOptionsTag}
+                setShowTagDeleteWarning={setShowTagDeleteWarning}
+                showOptionsTag={showOptionsTag}
+                tagListLocal={tagListLocal}
+            />
         </section >
 
 

@@ -5,6 +5,7 @@ import { DataBaseError, DataBaseSystemFailure } from "./tagError";
 
 {/* method: GET */ }
 export const listTagByQuantity = async (lastID: string | null): Promise<Tag_I[]> => {
+
     if (!db) throw new DataBaseError("The database is not initialized.");
 
     try {
