@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 import { DataBaseError, DataBaseSystemFailure } from "../../TAG/Infraestructure/tagError";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
@@ -34,4 +34,19 @@ export const createNewNote = async (id: string, title: string): Promise<string |
         if (error instanceof DataBaseError) throw error;
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
-}
+};
+
+{/* method: DELETE */ }
+export const deleteNote = async (id: string): Promise<void | true> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        await deleteDoc(doc(db, "NOTES", id));
+
+        return true;
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
+
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+};
