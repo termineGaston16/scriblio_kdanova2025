@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./UI/Application/Redux/store/storeRedux";
 import { ListLocalProvider } from "./TAG/Presentation/Context/listLocalContext";
 import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPreviousNoteList";
+import { ListNotesLocalProvider } from "./NOTES/Presentation/Context/listNotesLocalContext";
 
 export default function App() {
 
@@ -17,12 +18,14 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
+                        <ListNotesLocalProvider>
+                            <Routes>
+                                <Route path="*" element={'Page Not Found'} />
 
-                        <Routes>
-                            <Route path="*" element={'Page Not Found'} />
 
-                            <Route path="/" element={<SectionPreviousNoteList />} />
-                        </Routes>
+                                <Route path="/" element={<SectionPreviousNoteList />} />
+                            </Routes>
+                        </ListNotesLocalProvider>
                     </BrowserRouter>
                 </QueryClientProvider>
             </Provider>

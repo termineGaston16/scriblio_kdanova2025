@@ -13,7 +13,7 @@ export const createNewNote = async (id: string, title: string): Promise<string |
         const snapshot = await getDocs(tagsCollection);
         const tagCount = snapshot.size;
 
-        if (tagCount >= 200) return "Se ha alcanzado el límite de 200 tags.";
+        if (tagCount >= 200) return "Se ha alcanzado el límite de 200 notas.";
 
         const tagRef = doc(tagsCollection, id);
 

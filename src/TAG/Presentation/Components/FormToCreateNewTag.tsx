@@ -48,7 +48,7 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
                 name="nameNewTag"
                 id="nameNewTag"
                 onMouseLeave={() => setMessageInfo(null)}
-                onMouseEnter={() => setMessageInfo(` *introduce un nombre para el Tag. 
+                onMouseEnter={() => setMessageInfo(`
                     *debe contener entre 3 - 50 caracteres.
                     *no se permiten caracters especiales.
                     `)}
