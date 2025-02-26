@@ -15,7 +15,7 @@ const NotePreviewList: React.FC<Props> = ({ listNoteLocal, lastNote }) => {
     const rowVirtualizer = useVirtualizer({
         count: listNoteLocal.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 200,
+        estimateSize: () => 50,
     });
 
 
@@ -51,6 +51,7 @@ const NotePreviewList: React.FC<Props> = ({ listNoteLocal, lastNote }) => {
                                     position: "absolute", // 📌 Posiciona los elementos correctamente
                                     top: 0,
                                     left: 0,
+                                    border: '1px solid yellow',
                                     width: "100%",
                                     transform: `translateY(${virtualRow.start}px)`, // 📌 Mueve cada elemento a su posición correcta
                                 }}

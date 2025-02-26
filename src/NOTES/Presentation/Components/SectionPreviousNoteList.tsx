@@ -15,9 +15,7 @@ export default function SectionPreviousNoteList() {
         listNoteLocal.length > 0 ? listNoteLocal[listNoteLocal.length - 1].id : null
     );
 
-    const { data, isLoading, isFetching, isError, refetch } = useGetNotesByQuantity(
-        lastIDRef.current,
-    );
+    const { data, isLoading, isFetching, isError, refetch } = useGetNotesByQuantity(lastIDRef.current);
 
     useEffect(() => {
         if (!data || data.length <= 0) return;

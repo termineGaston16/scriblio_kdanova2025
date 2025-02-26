@@ -1,7 +1,8 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, where } from "firebase/firestore";
 import { DataBaseError, DataBaseSystemFailure } from "../../TAG/Infraestructure/tagError";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
+import { ClassNotes_E } from "../Domain/classNotes";
 
 {/* method: POST */ }
 export const createNewNote = async (id: string, title: string): Promise<string | true> => {
@@ -83,3 +84,42 @@ export const getNotesByQuantity = async (lastID: string | null): Promise<Note_I[
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 };
+
+{/* method: GET */ }
+export const getGradesByClassAndByAmount = async (lastID: string | null, classStyle: ClassNotes_E, whereValue: boolean) => {
+    if (!db) throw new DataBaseError("The database is not initialized.");
+
+    try {
+        const tagsRef = collection(db, "NOTES");
+        let q;
+
+        if (lastID) {
+            const lastDocRef = doc(db, "NOTES", lastID);
+            const lastDocSnap = await getDoc(lastDocRef);
+
+            if (!lastDocSnap.exists()) {
+                return [];
+            }
+
+            q = query(
+                tagsRef,
+                orderBy("id"),
+                startAfter(lastDocSnap),
+                where(classStyle, "==", whereValue),
+                limit(6)
+            );
+        } else {
+            q = query(tagsRef, orderBy("id"), where(classStyle, "==", whereValue), limit(6));
+        }
+
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Note_I[];
+    } catch (error) {
+
+        if (error instanceof DataBaseError) {
+            throw error;
+        }
+
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}

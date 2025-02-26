@@ -1,4 +1,4 @@
-import { useMutation } from "react-query"
+import { useMutation } from "@tanstack/react-query"
 import { createNewNote } from "../../Infraestructure/noteAPI"
 import { useListNotesLocalContext } from "../Context/listNotesLocalContext"
 import { toast } from "sonner"

@@ -1,4 +1,4 @@
-import { useMutation } from "react-query"
+import { useMutation } from "@tanstack/react-query"
 import { addNewTag } from "../../Infraestructure/tagAPI"
 import { useListLocalContext } from "../Context/listLocalContext";
 import { toast } from "sonner";

@@ -24,44 +24,76 @@ export default function Navbar() {
                 </p>
             }
 
-            <ul>
-                <li>
+            <ul style={{
+                display: 'flex',
+                gap: '10px',
+                flexDirection: 'column'
+            }}>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/'}>
                         <span>todas las listas</span>
                         <MdOutlineNotes />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/favoritos'}>
                         <span>favoritos</span>
                         <IoIosStarOutline />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/pendientes'}>
                         <span>pendientes</span>
                         <FaCheck />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/completadas'}>
                         <span>completadas</span>
                         <FaCheckDouble />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/fijas'}>
                         <span>fijas</span>
                         <TiPinOutline />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <Link to={'/archivadas'}>
                         <span>archivadas</span>
                         <IoArchiveOutline />
                     </Link>
                 </li>
-                <li>
+                <li
+                    style={{
+                        border: '1px solid aqua',
+                        height: '30px'
+                    }}>
                     <button
                         type="button"
                     >

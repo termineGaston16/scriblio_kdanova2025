@@ -1,15 +1,25 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
-import React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { store } from "./UI/Application/Redux/store/storeRedux";
 import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPreviousNoteList";
 import { ListNotesLocalProvider } from "./NOTES/Presentation/Context/listNotesLocalContext";
 import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/Header";
+import React from "react";
 
 export default function App() {
 
     const query = new QueryClient();
+
+    const parametersToFilterNotes = [
+        '/',
+        '/favoritos',
+        '/pendientes',
+        '/completadas',
+        '/fijas',
+        '/archivadas',
+    ];
+
 
     return (
         <React.StrictMode>
@@ -23,7 +33,9 @@ export default function App() {
                             <Routes>
                                 <Route path="*" element={'Page Not Found'} />
 
-                                <Route path="/" element={<SectionPreviousNoteList />} />
+                                {parametersToFilterNotes.map((path) => (
+                                    <Route key={path} path={path} element={<SectionPreviousNoteList />} />
+                                ))}
                             </Routes>
                         </ListNotesLocalProvider>
                     </BrowserRouter>
