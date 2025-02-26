@@ -2,8 +2,6 @@ import { useQuery } from "react-query";
 import { listTagByQuantity } from "../../Infraestructure/tagAPI";
 
 export const useListTagByQuantity = (lastID: string | null) => {
-
-    // return [];
     return useQuery({
         queryKey: ['listTag', lastID],
         queryFn: () => listTagByQuantity(lastID),
