@@ -52,7 +52,7 @@ export default function SectionPreviousNoteList() {
     }, []);
 
     return (<>
-        <section>
+        <section style={{ backgroundColor: '#aae1dd' }}>
             <button
                 onClick={() => setShowFormToCreateNewNote(true)}
                 type="button">

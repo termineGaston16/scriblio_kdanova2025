@@ -1,12 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import TagList from "./TAG/Presentation/Components/TagList";
 import { QueryClient, QueryClientProvider } from "react-query";
 import React from "react";
 import { Provider } from "react-redux";
 import { store } from "./UI/Application/Redux/store/storeRedux";
-import { ListLocalProvider } from "./TAG/Presentation/Context/listLocalContext";
 import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPreviousNoteList";
 import { ListNotesLocalProvider } from "./NOTES/Presentation/Context/listNotesLocalContext";
+import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/Header";
 
 export default function App() {
 
@@ -18,10 +17,11 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
+                        <Header />
+
                         <ListNotesLocalProvider>
                             <Routes>
                                 <Route path="*" element={'Page Not Found'} />
-
 
                                 <Route path="/" element={<SectionPreviousNoteList />} />
                             </Routes>
@@ -29,9 +29,9 @@ export default function App() {
                     </BrowserRouter>
                 </QueryClientProvider>
             </Provider>
-        </React.StrictMode>
+        </React.StrictMode >
     )
 }
 
 // ListLocalProvider: [TagList]
-// ListNotesLocalProvider: [TagList]
+// ListNotesLocalProvider: [SectionPreviousNoteList]
