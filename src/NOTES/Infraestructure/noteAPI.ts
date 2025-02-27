@@ -86,7 +86,11 @@ export const getNotesByQuantity = async (lastID: string | null): Promise<Note_I[
 };
 
 {/* method: GET */ }
-export const getGradesByClassAndByAmount = async (lastID: string | null, classStyle: ClassNotes_E, whereValue: boolean) => {
+export const getGradesByClassAndByAmount = async (
+    lastID: string | null,
+    classStyle: ClassNotes_E,
+    whereValue: boolean
+) => {
     if (!db) throw new DataBaseError("The database is not initialized.");
 
     try {
@@ -103,13 +107,12 @@ export const getGradesByClassAndByAmount = async (lastID: string | null, classSt
 
             q = query(
                 tagsRef,
-                orderBy("id"),
                 startAfter(lastDocSnap),
                 where(classStyle, "==", whereValue),
                 limit(6)
             );
         } else {
-            q = query(tagsRef, orderBy("id"), where(classStyle, "==", whereValue), limit(6));
+            q = query(tagsRef, where(classStyle, "==", whereValue), limit(6));
         }
 
         const querySnapshot = await getDocs(q);

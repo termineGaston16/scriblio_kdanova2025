@@ -1,15 +1,22 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
-import { getNotesByQuantity } from "../../Infraestructure/noteAPI"
+import { getGradesByClassAndByAmount } from "../../Infraestructure/noteAPI"
 import { ClassNotes_E } from "../../Domain/classNotes"
 
-export const useGetGradesByClassAndByAmount = (lastID: string | null, classStyle: ClassNotes_E, whereValue: boolean) => {
+export const useGetGradesByClassAndByAmount = (
+    lastID: string | null,
+    classStyle: ClassNotes_E | null,
+    whereValue: boolean
+) => {
+
     return useQuery({
-        queryKey: ['notes', lastID, classStyle, whereValue],
-        queryFn: () => getNotesByQuantity(lastID),
+        queryKey: ['notesFiltred', lastID, classStyle ?? 'null', whereValue],
+        queryFn: () => getGradesByClassAndByAmount(
+            lastID,
+            classStyle as ClassNotes_E,
+            whereValue
+        ),
         gcTime: 60 * 60 * 1000,
-        enabled: (!lastID || typeof lastID === 'string') &&
-            Object.values(classStyle).includes(classStyle) &&
-            typeof whereValue === 'boolean',
+        enabled: classStyle !== null && typeof whereValue === 'boolean',
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
         retry: 0,

@@ -1,12 +1,15 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { getNotesByQuantity } from "../../Infraestructure/noteAPI"
 
-export const useGetNotesByQuantity = (lastID: string | null) => {
+export const useGetNotesByQuantity = (
+    lastID: string | null,
+    classStyle: string | null
+) => {
     return useQuery({
-        queryKey: ['notes', lastID],
+        queryKey: ['notes', lastID ?? 'none'],
         queryFn: () => getNotesByQuantity(lastID),
         gcTime: 60 * 60 * 1000,
-        enabled: !lastID || typeof lastID === 'string',
+        enabled: !classStyle && (!lastID || typeof lastID === 'string'),
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
         retry: 0,
