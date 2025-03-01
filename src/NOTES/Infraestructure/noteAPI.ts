@@ -93,9 +93,6 @@ export const getGradesByClassAndByAmount = async (
 ) => {
     if (!db) throw new DataBaseError("The database is not initialized.");
 
-
-    console.log(classStyle);
-    console.log(whereValue);
     try {
         const tagsRef = collection(db, "NOTES");
         let q;

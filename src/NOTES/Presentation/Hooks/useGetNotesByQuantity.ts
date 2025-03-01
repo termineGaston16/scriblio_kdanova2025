@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getNotesByQuantity } from "../../Infraestructure/noteAPI"
 import { Note_I } from "../../Domain/note";
+import React from "react";
 
 export const useGetNotesByQuantity = (
     lastID: string | null,
@@ -8,19 +9,9 @@ export const useGetNotesByQuantity = (
 ) => {
     const queryClient = useQueryClient();
 
-    return useQuery({
+    const query = useQuery({
         queryKey: ['notes'],
-        queryFn: async () => {
-            const newNotes = await getNotesByQuantity(lastID);
-
-            // 🔥 Fusionar nuevas notas en caché
-            queryClient.setQueryData(['notes'], (oldNotes: Note_I[]) => {
-                if (!oldNotes || oldNotes.length <= 0) return [...newNotes];
-                return [...oldNotes, ...newNotes];
-            });
-
-            return queryClient.getQueryData(['notes']) as Note_I[];
-        },
+        queryFn: () => getNotesByQuantity(lastID),
         gcTime: 60 * 60 * 1000,
         enabled: !classStyle && (!lastID || typeof lastID === 'string'),
         placeholderData: keepPreviousData,
@@ -28,4 +19,17 @@ export const useGetNotesByQuantity = (
         retry: 0,
         staleTime: 60 * 60 * 1000
     });
+
+    React.useEffect(() => {
+        if (!query.data || query.data.length <= 0) return;
+
+        queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+            const newData = query.data.filter(note =>
+                !prevList.some(prevNote => prevNote.id === note.id)
+            );
+            return [...prevList, ...newData];
+        });
+    }, [queryClient, query.data]);
+
+    return query;
 };

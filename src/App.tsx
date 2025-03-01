@@ -6,6 +6,8 @@ import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPrev
 import { ListNotesLocalProvider } from "./NOTES/Presentation/Context/listNotesLocalContext";
 import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/Header";
 import React from "react";
+import TagList from "./TAG/Presentation/Components/TagList";
+import { ListLocalProvider } from "./TAG/Presentation/Context/listLocalContext";
 
 export default function App() {
 
@@ -26,6 +28,11 @@ export default function App() {
             <Provider store={store}>
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
+
+                        {/* <ListLocalProvider>
+                            <TagList />
+                        </ListLocalProvider> */}
+
 
                         <Header />
 

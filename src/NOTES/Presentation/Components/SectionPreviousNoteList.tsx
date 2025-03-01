@@ -10,7 +10,6 @@ import { useLocation } from "react-router-dom";
 import { validateLocationToFiltred } from "../../Application/noteAPP";
 import { useGetGradesByClassAndByAmount } from "../Hooks/useGetGradesByClassAndByAmount";
 import { useQueryClient } from "@tanstack/react-query";
-import { Note_I } from "../../Domain/note";
 
 export default function SectionPreviousNoteList() {
 
@@ -19,9 +18,7 @@ export default function SectionPreviousNoteList() {
     const queryClient = useQueryClient();
 
     const { listNoteLocal, setListNoteLocal } = useListNotesLocalContext();
-
     const lastIDRef = useRef<string | null>(null)
-
     const [filter, setFilter] = useState<{
         classStyle: ClassNotes_E | null,
         whereValue: boolean
@@ -64,7 +61,7 @@ export default function SectionPreviousNoteList() {
                 const lastID = data[data.length - 1]?.id
                 lastIDRef.current = lastID;
             }
-
+            console.log('DATA');
             return [...prevList, ...data];
         });
     }, [data]);
@@ -78,28 +75,30 @@ export default function SectionPreviousNoteList() {
                 lastIDRef.current = lastID;
             }
 
+            console.log('DATA FILTRED');
             return [...prevList, ...dataFiltredbyClass];
         });
     }, [dataFiltredbyClass])
 
     useEffect(() => {
-        if (!data || data.length <= 0 || !dataFiltredbyClass || dataFiltredbyClass.length <= 0) return;
-
-        let lastDatasInCache: Note_I[] = [];
+        if (data || dataFiltredbyClass) return;
+        let dataInCache;
 
         if (!filter.classStyle) {
-            lastDatasInCache = queryClient.getQueryData(['notes']) as Note_I[] || [];
+            console.log('DATA CACHE');
+            dataInCache = queryClient.getQueryData(['notes']);
         } else {
-            lastDatasInCache = queryClient.getQueryData([
+            console.log('DATA FILTRED CACHE');
+            dataInCache = queryClient.getQueryData([
                 'notesFiltred',
                 filter.classStyle,
-                filter.whereValue
-            ]) as Note_I[] || [];
-        };
+                filter.whereValue]);
+        }
 
-        setListNoteLocal(lastDatasInCache);
-    }, [queryClient, filter.classStyle, filter.whereValue]);
+        if (!Array.isArray(dataInCache)) return;
+        setListNoteLocal(dataInCache);
 
+    }, [location.pathname, filter.classStyle, filter.whereValue])
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastNote = useCallback((node: HTMLElement | null) => {

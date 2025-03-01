@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { addNewTag } from "../../Infraestructure/tagAPI"
-import { useListLocalContext } from "../Context/listLocalContext";
 import { toast } from "sonner";
+import { Tag_I } from "../../Domain/tag";
 
 interface NewTagData {
     title: string;
@@ -11,32 +11,30 @@ interface NewTagData {
 
 export const useAddNewTag = () => {
 
-    const { setTagListLocal } = useListLocalContext()
+    const queryclient = useQueryClient();
 
     return useMutation({
         mutationFn: (newTag: NewTagData) => addNewTag(newTag.title, newTag.colorTag, newTag.id),
-        onMutate: (newTag: NewTagData) => {
-            const { title, colorTag, id } = newTag;
-            setTagListLocal(prevList => [
-                {
-                    title: title,
-                    colorTag: colorTag,
-                    id: id,
+        onMutate: async (newTag: NewTagData) => {
+
+            await queryclient.cancelQueries({ queryKey: ['listTag'] });
+            const prevCache = queryclient.getQueryData(['listTag']);
+
+            queryclient.setQueryData(['listTag'], (prevList: Tag_I[] = []) => {
+                return [...prevList, {
+                    ...newTag,
                     notesInThisTag: []
-                },
-                ...prevList
-            ]);
+                }]
+            })
 
+            return { prevCache }
         },
-        onError: () => {
-            setTagListLocal(prevList => {
-                if (prevList.length > 0) return prevList.slice(1);
-                return prevList;
-            });
-
-            toast(<div>no fue posible crearlo</div>)
+        onError: (_, __, context) => {
+            queryclient.setQueryData(['listTag'], context?.prevCache);
+            toast(<div>no fue posible crearlo</div>);
         },
         onSuccess: (response) => {
+            queryclient.invalidateQueries({ queryKey: ['listTag'] });
             if (typeof response === 'boolean' && response) toast(<div>creado con éxito!</div>)
         }
     });

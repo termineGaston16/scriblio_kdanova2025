@@ -1,60 +1,45 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { removeTag } from "../../Infraestructure/tagAPI"
-import { useListLocalContext } from "../Context/listLocalContext";
-import { useRef } from "react";
-import { Tag_I } from "../../Domain/tag";
 import { toast } from "sonner";
+import { Tag_I } from "../../Domain/tag";
 
 export const useRemoveTag = () => {
 
-    const { setTagListLocal } = useListLocalContext();
-    const indexRef = useRef<number | null>(null)
-    const tagRef = useRef<Tag_I | null>(null)
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (id: string) => removeTag(id),
-
-        onMutate: (id: string) => {
+        onMutate: async (id: string) => {
             if (typeof id !== "string") throw new TypeError(`
                 removeTag expected a parameter of type string but received one of type ${typeof id}
             `);
 
-            setTagListLocal(prevTags => {
-                const index = prevTags.findIndex(tag => tag.id === id);
-                if (index === -1) return prevTags;
+            await queryClient.cancelQueries({ queryKey: ['listTag'] })
+            const prevListCache = queryClient.getQueryData(['listTag']);
 
-                tagRef.current = prevTags[index];
-                indexRef.current = index;
+            queryClient.setQueryData(['listTag'], (prevList: Tag_I[] = []) => {
+                const index = prevList.findIndex(tag => tag.id === id)
+                if (index < 0) return prevList;
 
-                const newList = [...prevTags];
-                newList.splice(index, 1);
+                const newList = [...prevList];
+                newList.splice(index, 1)
 
-                return newList;
-            });
+                return newList
+            })
+
+            return { prevListCache }
         },
 
-        onError: () => {
-            setTagListLocal(prevTags => {
-                if (indexRef.current === null || tagRef.current === null) return prevTags;
-
-                const newList = [...prevTags];
-                newList.splice(indexRef.current, 0, tagRef.current);
-
-                return newList;
-            });
-
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['listTag'], context?.prevListCache);
             toast(<div>No fue posible eliminar el tag</div>);
         },
 
         onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: ['listTag'] })
             if (typeof response === "boolean" && response) {
                 toast(<div>Tag eliminado correctamente</div>);
             }
-        },
-
-        onSettled: () => {
-            indexRef.current = null;
-            tagRef.current = null;
         }
     });
 };

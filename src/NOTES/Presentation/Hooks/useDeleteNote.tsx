@@ -1,50 +1,40 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { deleteNote } from "../../Infraestructure/noteAPI"
-import { useListNotesLocalContext } from "../Context/listNotesLocalContext"
-import { useRef } from "react";
-import { Note_I } from "../../Domain/note";
 import { toast } from "sonner";
+import { Note_I } from "../../Domain/note";
 
 export const useDeleteNote = () => {
 
-    const { setListNoteLocal } = useListNotesLocalContext();
-    const indexRef = useRef<number | null>(null);
-    const noteRef = useRef<Note_I | null>(null)
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (id: string) => deleteNote(id),
-        onMutate: (id: string) => {
-            setListNoteLocal(prevList => {
-                const index = prevList.findIndex(note => note.id === id);
-                if (index < 0) return prevList;
+        onMutate: async (id: string) => {
 
-                indexRef.current = index;
-                noteRef.current = prevList[index];
+            await queryClient.cancelQueries({ queryKey: ['notes'] })
+            const prevListCache = queryClient.getQueryData(['notes']);
+
+            queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+                const index = prevList.findIndex(note => note.id === id);
+                if (index <= 0) return prevList;
 
                 const newList = [...prevList];
                 newList.splice(index, 1);
-
-                return newList;
-            });
-        },
-        onError: () => {
-            setListNoteLocal(prevList => {
-                if (indexRef.current === null || noteRef.current === null) return prevList;
-
-                const newList = [...prevList];
-                newList.splice(indexRef.current, 0, noteRef.current);
                 return newList;
             })
+
+            return { prevListCache }
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['notes'], context?.prevListCache)
             toast(`la nota no pudo eliminarse`)
         },
         onSuccess: (reponse) => {
+            queryClient.invalidateQueries({ queryKey: ['notes'] });
+
             if (typeof reponse === 'boolean' && reponse) {
                 toast(`nota eliminada correctamente`)
             };
-        },
-        onSettled: () => {
-            indexRef.current = null;
-            noteRef.current = null;
         }
     })
 }

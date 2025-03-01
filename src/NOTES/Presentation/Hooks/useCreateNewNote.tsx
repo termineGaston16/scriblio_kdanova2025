@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createNewNote } from "../../Infraestructure/noteAPI"
-import { useListNotesLocalContext } from "../Context/listNotesLocalContext"
 import { toast } from "sonner"
+import { Note_I } from "../../Domain/note"
 
 interface Props {
     id: string,
@@ -10,53 +10,39 @@ interface Props {
 
 export const useCreateNewNote = () => {
 
-    const { setListNoteLocal } = useListNotesLocalContext();
+    const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (params: Props) => createNewNote(params.id, params.title),
-        onMutate: (params: Props) => {
-            const { id, title } = params;
+        onMutate: async (params: Props) => {
 
-            setListNoteLocal(prevList => {
-                const newList = [...prevList];
-                if (typeof id !== 'string' || typeof title !== 'string') return prevList;
+            await queryClient.cancelQueries({ queryKey: ['notes'] })
+            const listPrevCache = queryClient.getQueryData(['notes'])
 
-                newList.unshift({
-                    id: '',
+            queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+                return [...prevList, {
+                    ...params,
                     creationDate: new Date().toLocaleDateString(),
                     isArchived: false,
                     isCompleted: false,
                     isFav: false,
                     isFixed: false,
                     modificationDate: null,
-                    title: title
-                });
-                return newList;
+                }]
             })
+
+            return { listPrevCache }
         },
-        onError: () => {
-            setListNoteLocal(prevList => {
-                const newList = [...prevList];
-                if (newList.length <= 0) return prevList;
-
-                newList.shift();
-                return newList;
-            });
-
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['notes'], context?.listPrevCache)
             toast(
                 <div> no se pudo crear la nota</div>
             );
         },
-        onSuccess: (response, params: Props) => {
+        onSuccess: (response) => {
+            queryClient.invalidateQueries({ queryKey: ['notes'] });
+
             if (typeof response === 'boolean' && response) {
-
-                setListNoteLocal(prevList => {
-                    const newList = [...prevList];
-                    newList[0].id = params.id
-
-                    return newList;
-                });
-
                 toast(
                     <div> nota creada correctamente</div>
                 );
