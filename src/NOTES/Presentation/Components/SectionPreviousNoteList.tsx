@@ -30,7 +30,7 @@ export default function SectionPreviousNoteList() {
 
         return {
             classStyle: currentLocation,
-            whereValue: location.pathname === '/completadas' ? true : false
+            whereValue: location.pathname === '/pendientes' ? false : true
         };
     })
 
@@ -39,7 +39,7 @@ export default function SectionPreviousNoteList() {
 
         setFilter({
             classStyle: currentLocation,
-            whereValue: location.pathname === '/completadas' ? true : false
+            whereValue: location.pathname === '/pendientes' ? false : true
         });
 
         setListNoteLocal([]);
@@ -110,10 +110,6 @@ export default function SectionPreviousNoteList() {
             if (entries[0].isIntersecting) {
                 setListNoteLocal(prevList => {
                     const lastID = prevList[prevList.length - 1].id;
-
-                    console.log(lastID);
-                    console.log(lastIDRef.current);
-
 
                     if (lastID !== lastIDRef.current) {
                         if (!filter.classStyle) refetch();
