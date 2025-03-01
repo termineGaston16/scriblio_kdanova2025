@@ -24,47 +24,42 @@ export default function SectionPreviousNoteList() {
         allNotes: string | null,
         filtredNotes: string | null
     }>(
-        listNoteLocal.length > 0
-            ? {
-                allNotes: validateLocationToFiltred(location.pathname) === null
-                    ? listNoteLocal[listNoteLocal.length - 1].id
-                    : null,
-                filtredNotes: validateLocationToFiltred(location.pathname) !== null
-                    ? listNoteLocal[listNoteLocal.length - 1].id
-                    : null
-            }
-            : {
-                allNotes: null,
-                filtredNotes: null
-            }
-
+        {
+            allNotes: null,
+            filtredNotes: null
+        }
     );
 
     const [filter, setFilter] = useState<{
         classStyle: ClassNotes_E | null,
         whereValue: boolean
-    }>({
-        classStyle: null,
-        whereValue: false
+    }>(() => {
+        const currentLocation = validateLocationToFiltred(location.pathname);
+
+        return {
+            classStyle: currentLocation,
+            whereValue: location.pathname === '/completadas' ? true : false
+        };
     })
 
     useEffect(() => {
+        const currentLocation = validateLocationToFiltred(location.pathname);
+
         setFilter({
-            classStyle: validateLocationToFiltred(location.pathname),
-            whereValue:
-                validateLocationToFiltred(location.pathname) === null
-                    ? false
-                    : location.pathname !== '/pendientes'
+            classStyle: currentLocation,
+            whereValue: location.pathname === '/completadas' ? true : false
+        });
 
-        })
+        setListNoteLocal([]);
+        lastsIDsRef.current.allNotes = null;
+        lastsIDsRef.current.filtredNotes = null;
     }, [location.pathname])
-
 
     const { data, isLoading, isFetching, isError, refetch } = useGetNotesByQuantity(
         lastsIDsRef.current.allNotes,
         filter.classStyle
     );
-    const { data: dataFiltredbyClass, refetch: refetchFiltredByClass } = useGetGradesByClassAndByAmount(
+    const { data: dataFiltredbyClass, refetch: refetchFiltredByClass, isFetching: isFetchingFiltredByClass } = useGetGradesByClassAndByAmount(
         lastsIDsRef.current.filtredNotes,
         filter.classStyle,
         filter.whereValue
@@ -72,8 +67,12 @@ export default function SectionPreviousNoteList() {
 
     useEffect(() => {
         if (!data || data.length <= 0) return;
+
         setListNoteLocal(prevList => {
-            if (!filter.classStyle) return data;
+            if (prevList.length <= 0) {
+                const lastID = data[data.length - 1]?.id
+                lastsIDsRef.current.allNotes = lastID;
+            }
 
             return [...prevList, ...data];
         });
@@ -81,35 +80,33 @@ export default function SectionPreviousNoteList() {
 
     useEffect(() => {
         if (!dataFiltredbyClass || dataFiltredbyClass.length <= 0) return;
+
         setListNoteLocal(prevList => {
-            if (filter.classStyle) return dataFiltredbyClass;
+            if (prevList.length <= 0) {
+                const lastID = dataFiltredbyClass[dataFiltredbyClass.length - 1]?.id
+                lastsIDsRef.current.filtredNotes = lastID;
+            }
 
             return [...prevList, ...dataFiltredbyClass];
         });
     }, [dataFiltredbyClass])
 
     useEffect(() => {
+        if (!data || data.length <= 0) return;
+
         let lastDatasInCache: Note_I[] = [];
 
         if (!filter.classStyle) {
-            lastDatasInCache = queryClient.getQueryData([
-                'notes',
-                lastsIDsRef.current.allNotes ?? 'none'
-            ]) as Note_I[] || [];
+            lastDatasInCache = queryClient.getQueryData(['notes']) as Note_I[] || [];
         } else {
-            const filteredQueries = queryClient.getQueriesData({
-                predicate: (query) => query.queryKey[2] === validateLocationToFiltred(location.pathname)
-            });
+            lastDatasInCache = queryClient.getQueryData([
+                'notesFiltred',
+                filter.classStyle,
+                filter.whereValue
+            ]) as Note_I[] || [];
+        };
 
-            lastDatasInCache = filteredQueries.length > 0
-                ? (filteredQueries[filteredQueries.length - 1] as Note_I[])
-                : [];
-
-            console.log(lastDatasInCache);
-
-        }
-
-        // setListNoteLocal(lastDatasInCache);
+        setListNoteLocal(lastDatasInCache);
     }, [queryClient, filter.classStyle, filter.whereValue]);
 
 
@@ -141,7 +138,7 @@ export default function SectionPreviousNoteList() {
         }, {
             root: null,
             rootMargin: '0px',
-            threshold: .5
+            threshold: .1
         })
 
         if (node) observerRef.current.observe(node);
@@ -172,13 +169,25 @@ export default function SectionPreviousNoteList() {
 
         {
             <AsynchronousResponse
-                isLoading={isLoading || isFetching}
+                isLoading={isLoading || isFetching || isFetchingFiltredByClass}
                 isError={isError}
                 loadingComponent={
-                    <span>Cargando más notas...</span>
+                    <span
+                        style={{
+                            position: 'absolute',
+                            top: '0px',
+                            right: '0px',
+                            backgroundColor: 'yellow'
+                        }}
+                    >Cargando más notas...</span>
                 }
                 errorComponent={
-                    <span>Error al obtener notas</span>
+                    <span style={{
+                        position: 'absolute',
+                        top: '0px',
+                        right: '0px',
+                        backgroundColor: 'red'
+                    }}>Error al obtener notas</span>
                 }
             />
         }

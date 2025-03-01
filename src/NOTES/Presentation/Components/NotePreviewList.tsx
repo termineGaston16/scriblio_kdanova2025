@@ -15,7 +15,7 @@ const NotePreviewList: React.FC<Props> = ({ listNoteLocal, lastNote }) => {
     const rowVirtualizer = useVirtualizer({
         count: listNoteLocal.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 50,
+        estimateSize: () => 100,
     });
 
 
