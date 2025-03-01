@@ -91,10 +91,6 @@ export const getGradesByClassAndByAmount = async (
     classStyle: ClassNotes_E,
     whereValue: boolean
 ) => {
-    console.log(lastID);
-    console.log(classStyle);
-    console.log(whereValue);
-
     if (!db) throw new DataBaseError("The database is not initialized.");
 
     try {

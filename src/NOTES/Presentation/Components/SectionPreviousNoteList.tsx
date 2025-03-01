@@ -20,15 +20,7 @@ export default function SectionPreviousNoteList() {
 
     const { listNoteLocal, setListNoteLocal } = useListNotesLocalContext();
 
-    const lastsIDsRef = useRef<{
-        allNotes: string | null,
-        filtredNotes: string | null
-    }>(
-        {
-            allNotes: null,
-            filtredNotes: null
-        }
-    );
+    const lastIDRef = useRef<string | null>(null)
 
     const [filter, setFilter] = useState<{
         classStyle: ClassNotes_E | null,
@@ -51,16 +43,15 @@ export default function SectionPreviousNoteList() {
         });
 
         setListNoteLocal([]);
-        lastsIDsRef.current.allNotes = null;
-        lastsIDsRef.current.filtredNotes = null;
+        lastIDRef.current = null;
     }, [location.pathname])
 
     const { data, isLoading, isFetching, isError, refetch } = useGetNotesByQuantity(
-        lastsIDsRef.current.allNotes,
+        lastIDRef.current,
         filter.classStyle
     );
     const { data: dataFiltredbyClass, refetch: refetchFiltredByClass, isFetching: isFetchingFiltredByClass } = useGetGradesByClassAndByAmount(
-        lastsIDsRef.current.filtredNotes,
+        lastIDRef.current,
         filter.classStyle,
         filter.whereValue
     )
@@ -71,7 +62,7 @@ export default function SectionPreviousNoteList() {
         setListNoteLocal(prevList => {
             if (prevList.length <= 0) {
                 const lastID = data[data.length - 1]?.id
-                lastsIDsRef.current.allNotes = lastID;
+                lastIDRef.current = lastID;
             }
 
             return [...prevList, ...data];
@@ -84,7 +75,7 @@ export default function SectionPreviousNoteList() {
         setListNoteLocal(prevList => {
             if (prevList.length <= 0) {
                 const lastID = dataFiltredbyClass[dataFiltredbyClass.length - 1]?.id
-                lastsIDsRef.current.filtredNotes = lastID;
+                lastIDRef.current = lastID;
             }
 
             return [...prevList, ...dataFiltredbyClass];
@@ -92,7 +83,7 @@ export default function SectionPreviousNoteList() {
     }, [dataFiltredbyClass])
 
     useEffect(() => {
-        if (!data || data.length <= 0) return;
+        if (!data || data.length <= 0 || !dataFiltredbyClass || dataFiltredbyClass.length <= 0) return;
 
         let lastDatasInCache: Note_I[] = [];
 
@@ -120,16 +111,15 @@ export default function SectionPreviousNoteList() {
                 setListNoteLocal(prevList => {
                     const lastID = prevList[prevList.length - 1].id;
 
-                    if (!filter.classStyle) {
-                        if (lastID !== lastsIDsRef.current.allNotes) {
-                            lastsIDsRef.current.allNotes = lastID;
-                            refetch();
-                        }
-                    } else {
-                        if (lastID !== lastsIDsRef.current.filtredNotes) {
-                            lastsIDsRef.current.filtredNotes = lastID;
-                            refetchFiltredByClass();
-                        }
+                    console.log(lastID);
+                    console.log(lastIDRef.current);
+
+
+                    if (lastID !== lastIDRef.current) {
+                        if (!filter.classStyle) refetch();
+                        if (filter.classStyle) refetchFiltredByClass();
+
+                        lastIDRef.current = lastID;
                     }
 
                     return prevList;
