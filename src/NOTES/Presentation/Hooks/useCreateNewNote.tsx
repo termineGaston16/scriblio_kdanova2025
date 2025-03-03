@@ -16,10 +16,10 @@ export const useCreateNewNote = () => {
         mutationFn: (params: Props) => createNewNote(params.id, params.title),
         onMutate: async (params: Props) => {
 
-            await queryClient.cancelQueries({ queryKey: ['notes'] })
-            const listPrevCache = queryClient.getQueryData(['notes'])
+            await queryClient.cancelQueries({ queryKey: ['allNotes'] })
+            const listPrevCache = queryClient.getQueryData(['allNotes'])
 
-            queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+            queryClient.setQueryData(['allNotes'], (prevList: Note_I[] = []) => {
                 return [...prevList, {
                     ...params,
                     creationDate: new Date().toLocaleDateString(),
@@ -34,13 +34,13 @@ export const useCreateNewNote = () => {
             return { listPrevCache }
         },
         onError: (_, __, context) => {
-            queryClient.setQueryData(['notes'], context?.listPrevCache)
+            queryClient.setQueryData(['allNotes'], context?.listPrevCache)
             toast(
                 <div> no se pudo crear la nota</div>
             );
         },
         onSuccess: (response) => {
-            queryClient.invalidateQueries({ queryKey: ['notes'] });
+            queryClient.invalidateQueries({ queryKey: ['allNotes'] });
 
             if (typeof response === 'boolean' && response) {
                 toast(

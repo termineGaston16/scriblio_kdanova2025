@@ -14,10 +14,10 @@ export const useRemoveTag = () => {
                 removeTag expected a parameter of type string but received one of type ${typeof id}
             `);
 
-            await queryClient.cancelQueries({ queryKey: ['listTag'] })
-            const prevListCache = queryClient.getQueryData(['listTag']);
+            await queryClient.cancelQueries({ queryKey: ['allListTag'] })
+            const prevListCache = queryClient.getQueryData(['allListTag']);
 
-            queryClient.setQueryData(['listTag'], (prevList: Tag_I[] = []) => {
+            queryClient.setQueryData(['allListTag'], (prevList: Tag_I[] = []) => {
                 const index = prevList.findIndex(tag => tag.id === id)
                 if (index < 0) return prevList;
 
@@ -31,12 +31,12 @@ export const useRemoveTag = () => {
         },
 
         onError: (_, __, context) => {
-            queryClient.setQueryData(['listTag'], context?.prevListCache);
+            queryClient.setQueryData(['allListTag'], context?.prevListCache);
             toast(<div>No fue posible eliminar el tag</div>);
         },
 
         onSuccess: (response) => {
-            queryClient.invalidateQueries({ queryKey: ['listTag'] })
+            queryClient.invalidateQueries({ queryKey: ['allListTag'] })
             if (typeof response === "boolean" && response) {
                 toast(<div>Tag eliminado correctamente</div>);
             }

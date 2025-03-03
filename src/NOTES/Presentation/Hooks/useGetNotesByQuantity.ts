@@ -10,7 +10,7 @@ export const useGetNotesByQuantity = (
     const queryClient = useQueryClient();
 
     const query = useQuery({
-        queryKey: ['notes'],
+        queryKey: ['notes', lastID, classStyle ?? 'null'],
         queryFn: () => getNotesByQuantity(lastID),
         gcTime: 60 * 60 * 1000,
         enabled: !classStyle && (!lastID || typeof lastID === 'string'),
@@ -23,7 +23,7 @@ export const useGetNotesByQuantity = (
     React.useEffect(() => {
         if (!query.data || query.data.length <= 0) return;
 
-        queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+        queryClient.setQueryData(['allNotes'], (prevList: Note_I[] = []) => {
             const newData = query.data.filter(note =>
                 !prevList.some(prevNote => prevNote.id === note.id)
             );

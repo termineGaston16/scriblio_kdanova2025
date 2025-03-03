@@ -7,7 +7,7 @@ export const useListTagByQuantity = (lastID: string | null) => {
     const queryClient = useQueryClient();
 
     const query = useQuery<Tag_I[], Error>({
-        queryKey: ['listTag', lastID],
+        queryKey: ['listTag', lastID ?? 'null'],
         queryFn: async () => {
             return await listTagByQuantity(lastID);
         },
@@ -22,7 +22,7 @@ export const useListTagByQuantity = (lastID: string | null) => {
     React.useEffect(() => {
         if (!query.data || query.data.length <= 0) return;
 
-        queryClient.setQueryData<Tag_I[]>(['listTag'], (prevList = []) => {
+        queryClient.setQueryData<Tag_I[]>(['allListTag'], (prevList = []) => {
 
             const newData = query.data.filter(tag =>
                 !prevList.some(prevTag => prevTag.id === tag.id)

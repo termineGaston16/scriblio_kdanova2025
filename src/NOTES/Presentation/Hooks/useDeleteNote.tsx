@@ -11,10 +11,10 @@ export const useDeleteNote = () => {
         mutationFn: (id: string) => deleteNote(id),
         onMutate: async (id: string) => {
 
-            await queryClient.cancelQueries({ queryKey: ['notes'] })
-            const prevListCache = queryClient.getQueryData(['notes']);
+            await queryClient.cancelQueries({ queryKey: ['allNotes'] })
+            const prevListCache = queryClient.getQueryData(['allNotes']);
 
-            queryClient.setQueryData(['notes'], (prevList: Note_I[] = []) => {
+            queryClient.setQueryData(['allNotes'], (prevList: Note_I[] = []) => {
                 const index = prevList.findIndex(note => note.id === id);
                 if (index <= 0) return prevList;
 
@@ -26,11 +26,11 @@ export const useDeleteNote = () => {
             return { prevListCache }
         },
         onError: (_, __, context) => {
-            queryClient.setQueryData(['notes'], context?.prevListCache)
+            queryClient.setQueryData(['allNotes'], context?.prevListCache)
             toast(`la nota no pudo eliminarse`)
         },
         onSuccess: (reponse) => {
-            queryClient.invalidateQueries({ queryKey: ['notes'] });
+            queryClient.invalidateQueries({ queryKey: ['allNotes'] });
 
             if (typeof reponse === 'boolean' && reponse) {
                 toast(`nota eliminada correctamente`)

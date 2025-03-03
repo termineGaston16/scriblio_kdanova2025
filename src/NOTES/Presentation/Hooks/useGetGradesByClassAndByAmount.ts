@@ -30,7 +30,7 @@ export const useGetGradesByClassAndByAmount = (
     React.useEffect(() => {
         if (!query.data || query.data.length <= 0) return;
 
-        queryClient.setQueryData(['notesFiltred', classStyle, whereValue], (prevList: Note_I[] = []) => {
+        queryClient.setQueryData(['allNotesFiltred', classStyle, whereValue], (prevList: Note_I[] = []) => {
             // Filtrar solo los datos que NO están en prevList
             const newData = query.data.filter(note =>
                 !prevList.some(prevNote => prevNote.id === note.id)

@@ -19,6 +19,7 @@ export default function SectionPreviousNoteList() {
 
     const { listNoteLocal, setListNoteLocal } = useListNotesLocalContext();
     const lastIDRef = useRef<string | null>(null)
+    const emptyListRef = useRef<boolean>(true)
     const [filter, setFilter] = useState<{
         classStyle: ClassNotes_E | null,
         whereValue: boolean
@@ -29,7 +30,7 @@ export default function SectionPreviousNoteList() {
             classStyle: currentLocation,
             whereValue: location.pathname === '/pendientes' ? false : true
         };
-    })
+    });
 
     useEffect(() => {
         const currentLocation = validateLocationToFiltred(location.pathname);
@@ -39,7 +40,7 @@ export default function SectionPreviousNoteList() {
             whereValue: location.pathname === '/pendientes' ? false : true
         });
 
-        setListNoteLocal([]);
+        emptyListRef.current = true;
         lastIDRef.current = null;
     }, [location.pathname])
 
@@ -57,11 +58,13 @@ export default function SectionPreviousNoteList() {
         if (!data || data.length <= 0) return;
 
         setListNoteLocal(prevList => {
-            if (prevList.length <= 0) {
+            if (emptyListRef.current) {
                 const lastID = data[data.length - 1]?.id
                 lastIDRef.current = lastID;
+                emptyListRef.current = false;
+                return data;
             }
-            console.log('DATA');
+
             return [...prevList, ...data];
         });
     }, [data]);
@@ -70,12 +73,13 @@ export default function SectionPreviousNoteList() {
         if (!dataFiltredbyClass || dataFiltredbyClass.length <= 0) return;
 
         setListNoteLocal(prevList => {
-            if (prevList.length <= 0) {
+            if (emptyListRef.current) {
                 const lastID = dataFiltredbyClass[dataFiltredbyClass.length - 1]?.id
                 lastIDRef.current = lastID;
+                emptyListRef.current = false;
+                return dataFiltredbyClass;
             }
 
-            console.log('DATA FILTRED');
             return [...prevList, ...dataFiltredbyClass];
         });
     }, [dataFiltredbyClass])
@@ -85,12 +89,10 @@ export default function SectionPreviousNoteList() {
         let dataInCache;
 
         if (!filter.classStyle) {
-            console.log('DATA CACHE');
-            dataInCache = queryClient.getQueryData(['notes']);
+            dataInCache = queryClient.getQueryData(['allNotes']);
         } else {
-            console.log('DATA FILTRED CACHE');
             dataInCache = queryClient.getQueryData([
-                'notesFiltred',
+                'allNotesFiltred',
                 filter.classStyle,
                 filter.whereValue]);
         }
