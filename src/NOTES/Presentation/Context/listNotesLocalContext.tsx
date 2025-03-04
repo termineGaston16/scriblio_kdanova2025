@@ -3,7 +3,7 @@ import { Note_I } from "../../Domain/note";
 
 interface Props {
     listNoteLocal: Note_I[],
-    setListNoteLocal: React.Dispatch<React.SetStateAction<Note_I[]>>
+    setListNoteLocal: React.Dispatch<React.SetStateAction<Note_I[]>>,
 }
 
 interface ProviderProps {
@@ -17,9 +17,9 @@ export const ListNotesLocalProvider: React.FC<ProviderProps> = ({ children }) =>
     const [listNoteLocal, setListNoteLocal] = useState<Note_I[]>([])
 
     return (
-        <ListNotesLocalContext.Provider value={{ listNoteLocal, setListNoteLocal }}>
+        <ListNotesLocalContext.Provider value={{ listNoteLocal, setListNoteLocal }} >
             {children}
-        </ListNotesLocalContext.Provider>
+        </ListNotesLocalContext.Provider >
     )
 }
 

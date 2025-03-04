@@ -35,6 +35,8 @@ export const useAddNewTag = () => {
         },
         onSuccess: (response) => {
             queryclient.invalidateQueries({ queryKey: ['listTag'] });
+
+            if (typeof response === 'string') return response;
             if (typeof response === 'boolean' && response) toast(<div>creado con éxito!</div>)
         }
     });

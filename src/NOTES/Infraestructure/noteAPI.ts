@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, where } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, updateDoc, where } from "firebase/firestore";
 import { DataBaseError, DataBaseSystemFailure } from "../../TAG/Infraestructure/tagError";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
@@ -123,6 +123,32 @@ export const getGradesByClassAndByAmount = async (
             throw error;
         }
 
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}
+
+{/* method: PATCH */ }
+export const determineClassToNote = async (id: string, classStyle: ClassNotes_E, value: boolean): Promise<string | true> => {
+    if (!db) throw new DataBaseError("The database is not initialized.");
+
+    try {
+        const noteRef = doc(db, "NOTES", id);
+        const noteSnap = await getDoc(noteRef);
+
+        if (noteSnap.exists()) {
+            const data = noteSnap.data();
+
+            if (data[classStyle] === value) {
+                return `La nota ya posee esa clase. No se realizó ninguna actualización.`;
+            } else {
+                await updateDoc(noteRef, { [classStyle]: value });
+                return true;
+            }
+        } else {
+            return 'no se ha encontrado la nota en el sistema. Compruebe que aún exista.'
+        }
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 }

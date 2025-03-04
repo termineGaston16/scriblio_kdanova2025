@@ -9,7 +9,7 @@ import { ClassNotes_E } from "../../Domain/classNotes";
 import { useLocation } from "react-router-dom";
 import { validateLocationToFiltred } from "../../Application/noteAPP";
 import { useGetGradesByClassAndByAmount } from "../Hooks/useGetGradesByClassAndByAmount";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function SectionPreviousNoteList() {
 
@@ -48,6 +48,7 @@ export default function SectionPreviousNoteList() {
         lastIDRef.current,
         filter.classStyle
     );
+
     const { data: dataFiltredbyClass, refetch: refetchFiltredByClass, isFetching: isFetchingFiltredByClass } = useGetGradesByClassAndByAmount(
         lastIDRef.current,
         filter.classStyle,
@@ -96,6 +97,8 @@ export default function SectionPreviousNoteList() {
                 filter.classStyle,
                 filter.whereValue]);
         }
+
+        console.log(dataInCache);
 
         if (!Array.isArray(dataInCache)) return;
         setListNoteLocal(dataInCache);

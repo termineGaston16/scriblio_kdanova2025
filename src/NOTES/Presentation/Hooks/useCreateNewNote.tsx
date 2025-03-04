@@ -42,12 +42,13 @@ export const useCreateNewNote = () => {
         onSuccess: (response) => {
             queryClient.invalidateQueries({ queryKey: ['allNotes'] });
 
+            if (typeof response === 'string') return response;
+
             if (typeof response === 'boolean' && response) {
                 toast(
                     <div> nota creada correctamente</div>
                 );
             }
-
         },
     })
 }

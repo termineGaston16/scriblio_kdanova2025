@@ -5,13 +5,36 @@ import { IoIosStarOutline } from "react-icons/io";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { TiDeleteOutline, TiPinOutline } from "react-icons/ti";
 import { IoArchiveOutline } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDetermineClassToNote } from "../../../../../../NOTES/Presentation/Hooks/useDetermineClassToNote";
+import { validateLocationToFiltred } from "../../../../../../NOTES/Application/noteAPP";
 
 export default function Navbar() {
 
-    const [showInfoNavbar, setShowInfoNavbar] = useState<boolean>(false)
+    const [showInfoNavbar, setShowInfoNavbar] = useState<boolean>(false);
+    const [showAlertError, setShowAlertError] = useState<boolean>(false);
+    const { mutate, data, isSuccess } = useDetermineClassToNote();
 
-    return (
+    const handleDropNavbar = (e: React.DragEvent<HTMLLIElement>, zone: string) => {
+        e.preventDefault();
+        if (zone === 'borrar nota') return;
+
+        const idNote = e.dataTransfer.getData('idNote');
+        const classStyle = validateLocationToFiltred(zone);
+        if (!classStyle) return;
+
+        mutate({
+            id: idNote,
+            classStyle: classStyle,
+            value: true
+        })
+    }
+
+    useEffect(() => {
+        if (typeof data === 'string') setShowAlertError(true);
+    }, [isSuccess])
+
+    return (<>
         <nav>
             <BsFillInfoCircleFill
                 onMouseOver={() => setShowInfoNavbar(true)}
@@ -40,6 +63,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, '/favoritos')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -50,6 +75,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, '/pendientes')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -60,6 +87,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, '/completadas')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -70,6 +99,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, '/fijas')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -80,6 +111,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, '/archivadas')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -90,6 +123,8 @@ export default function Navbar() {
                     </Link>
                 </li>
                 <li
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDropNavbar(e, 'borrar nota')}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -103,5 +138,17 @@ export default function Navbar() {
                 </li>
             </ul>
         </nav>
-    )
+
+        {
+            showAlertError &&
+            <div>
+                {data}
+                <button
+                    onClick={() => setShowAlertError(false)}
+                    type="button">
+                    Okey
+                </button>
+            </div>
+        }
+    </>)
 }

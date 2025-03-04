@@ -29,11 +29,6 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        {/* <ListLocalProvider>
-                            <TagList />
-                        </ListLocalProvider> */}
-
-
                         <Header />
 
                         <ListNotesLocalProvider>
