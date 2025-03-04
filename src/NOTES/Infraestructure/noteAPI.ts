@@ -93,7 +93,6 @@ export const getFiltredByClassNotes = async (
 ) => {
     if (!db) throw new DataBaseError("The database is not initialized.");
 
-    console.log(classStyle);
     try {
         const tagsRef = collection(db, "NOTES");
         let q;
