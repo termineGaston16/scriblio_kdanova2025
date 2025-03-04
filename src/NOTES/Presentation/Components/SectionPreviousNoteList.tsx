@@ -2,108 +2,76 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import NotePreviewList from "./NotePreviewList";
 import FormToCreateNewNote from "./FormToCreateNewNote";
 import { Toaster } from "sonner";
-import { useListNotesLocalContext } from "../Context/listNotesLocalContext";
-import { useGetNotesByQuantity } from "../Hooks/useGetNotesByQuantity";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
 import { ClassNotes_E } from "../../Domain/classNotes";
 import { useLocation } from "react-router-dom";
 import { validateLocationToFiltred } from "../../Application/noteAPP";
-import { useGetGradesByClassAndByAmount } from "../Hooks/useGetGradesByClassAndByAmount";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Note_I } from "../../Domain/note";
+import { BruteNotesResponse, useGetBruteNotes } from "../Hooks/useGetBruteNotes";
+import { useGetFiltredByClassNotes } from "../Hooks/useGetGradesByClassAndByAmount";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SectionPreviousNoteList() {
 
-    const [showFormToCreateNewNote, setShowFormToCreateNewNote] = useState<boolean>(false);
-    const location = useLocation();
     const queryClient = useQueryClient();
+    const [showFormToCreateNewNote, setShowFormToCreateNewNote] = useState<boolean>(false);
 
-    const { listNoteLocal, setListNoteLocal } = useListNotesLocalContext();
-    const lastIDRef = useRef<string | null>(null)
-    const emptyListRef = useRef<boolean>(true)
-    const [filter, setFilter] = useState<{
-        classStyle: ClassNotes_E | null,
-        whereValue: boolean
-    }>(() => {
-        const currentLocation = validateLocationToFiltred(location.pathname);
+    const location = useLocation();
+    const [currentLinkValue, setCurrentLinkValue] = useState<ClassNotes_E | ''>(validateLocationToFiltred(location.pathname))
+    const emptyDataRef = useRef<boolean>(false);
 
-        return {
-            classStyle: currentLocation,
-            whereValue: location.pathname === '/pendientes' ? false : true
-        };
+    const [localBruteNotesList, setLocalBruteNotesList] = useState<Note_I[]>(() => {
+        return queryClient.getQueryData<BruteNotesResponse>(['bruteNotes'])?.pages.at(-1)?.notes ?? []
+    });
+    const [localFilteredNotesList, setLocalFilteredNotesList] = useState<Note_I[]>(() => {
+        return queryClient.getQueryData<BruteNotesResponse>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.at(-1)?.notes ?? []
     });
 
+
+    const {
+        data: bruteNotes,
+        fetchNextPage: fetchNextPageBruteNotes,
+        hasNextPage: hasNextPageBruteNotes,
+        isLoading: isLoadingBrutesNotes,
+        isError: isErrorBrutesNotes
+    } = useGetBruteNotes(currentLinkValue);
+
+    const {
+        data: filtredNotes,
+        fetchNextPage: fetchNextPageFiltredNotes,
+        hasNextPage: hasNextPageFiltredNotes,
+        isLoading: isLoadingFiltredNotes,
+        isError: isErrorFiltredNotes
+    } = useGetFiltredByClassNotes(currentLinkValue as ClassNotes_E);
+
     useEffect(() => {
-        const currentLocation = validateLocationToFiltred(location.pathname);
-
-        setFilter({
-            classStyle: currentLocation,
-            whereValue: location.pathname === '/pendientes' ? false : true
-        });
-
-        emptyListRef.current = true;
-        lastIDRef.current = null;
+        setCurrentLinkValue(validateLocationToFiltred(location.pathname))
+        emptyDataRef.current = true;
     }, [location.pathname])
 
-    const { data, isLoading, isFetching, isError, refetch } = useGetNotesByQuantity(
-        lastIDRef.current,
-        filter.classStyle
-    );
-
-    const { data: dataFiltredbyClass, refetch: refetchFiltredByClass, isFetching: isFetchingFiltredByClass } = useGetGradesByClassAndByAmount(
-        lastIDRef.current,
-        filter.classStyle,
-        filter.whereValue
-    )
-
     useEffect(() => {
-        if (!data || data.length <= 0) return;
+        const lastResponse = bruteNotes?.pages.at(-1);
+        if (!lastResponse || lastResponse.length <= 0) return;
 
-        setListNoteLocal(prevList => {
-            if (emptyListRef.current) {
-                const lastID = data[data.length - 1]?.id
-                lastIDRef.current = lastID;
-                emptyListRef.current = false;
-                return data;
-            }
-
-            return [...prevList, ...data];
-        });
-    }, [data]);
-
-    useEffect(() => {
-        if (!dataFiltredbyClass || dataFiltredbyClass.length <= 0) return;
-
-        setListNoteLocal(prevList => {
-            if (emptyListRef.current) {
-                const lastID = dataFiltredbyClass[dataFiltredbyClass.length - 1]?.id
-                lastIDRef.current = lastID;
-                emptyListRef.current = false;
-                return dataFiltredbyClass;
-            }
-
-            return [...prevList, ...dataFiltredbyClass];
-        });
-    }, [dataFiltredbyClass])
-
-    useEffect(() => {
-        if (data || dataFiltredbyClass) return;
-        let dataInCache;
-
-        if (!filter.classStyle) {
-            dataInCache = queryClient.getQueryData(['allNotes']);
+        if (emptyDataRef.current) {
+            emptyDataRef.current = false;
+            setLocalBruteNotesList(lastResponse);
         } else {
-            dataInCache = queryClient.getQueryData([
-                'allNotesFiltred',
-                filter.classStyle,
-                filter.whereValue]);
+            setLocalBruteNotesList(prevList => [...prevList, ...lastResponse]);
         }
+    }, [bruteNotes?.pages])
 
-        console.log(dataInCache);
+    useEffect(() => {
+        const lastResponse = filtredNotes?.pages.at(-1);
+        if (!lastResponse || lastResponse.length <= 0) return;
 
-        if (!Array.isArray(dataInCache)) return;
-        setListNoteLocal(dataInCache);
-
-    }, [location.pathname, filter.classStyle, filter.whereValue])
+        if (emptyDataRef.current) {
+            emptyDataRef.current = false;
+            setLocalFilteredNotesList(lastResponse);
+        } else {
+            setLocalFilteredNotesList(prevList => [...prevList, ...lastResponse]);
+        }
+    }, [filtredNotes?.pages])
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastNote = useCallback((node: HTMLElement | null) => {
@@ -112,18 +80,9 @@ export default function SectionPreviousNoteList() {
 
         observerRef.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting) {
-                setListNoteLocal(prevList => {
-                    const lastID = prevList[prevList.length - 1].id;
-
-                    if (lastID !== lastIDRef.current) {
-                        if (!filter.classStyle) refetch();
-                        if (filter.classStyle) refetchFiltredByClass();
-
-                        lastIDRef.current = lastID;
-                    }
-
-                    return prevList;
-                })
+                if (currentLinkValue.length <= 0 && hasNextPageBruteNotes) fetchNextPageBruteNotes();
+                if (Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
+                    && hasNextPageFiltredNotes) fetchNextPageFiltredNotes();
             }
         }, {
             root: null,
@@ -132,7 +91,7 @@ export default function SectionPreviousNoteList() {
         })
 
         if (node) observerRef.current.observe(node);
-    }, [filter.classStyle]);
+    }, [hasNextPageBruteNotes]);
 
     return (<>
         <section style={{ backgroundColor: '#aae1dd' }}>
@@ -143,7 +102,13 @@ export default function SectionPreviousNoteList() {
             </button>
 
             <NotePreviewList
-                listNoteLocal={listNoteLocal}
+                listNoteLocal={
+                    currentLinkValue.length <= 0
+                        ? localBruteNotesList
+                        : Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
+                            ? localFilteredNotesList
+                            : []
+                }
                 lastNote={lastNote}
             />
 
@@ -159,8 +124,8 @@ export default function SectionPreviousNoteList() {
 
         {
             <AsynchronousResponse
-                isLoading={isLoading || isFetching || isFetchingFiltredByClass}
-                isError={isError}
+                isLoading={isLoadingBrutesNotes || isLoadingFiltredNotes}
+                isError={isErrorBrutesNotes || isErrorFiltredNotes}
                 loadingComponent={
                     <span
                         style={{

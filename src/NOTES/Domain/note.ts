@@ -4,6 +4,7 @@ export interface Note_I {
     creationDate: string,
     modificationDate: null | string,
     isFav: boolean,
+    isNotCompleted: boolean,
     isCompleted: boolean,
     isFixed: boolean,
     isArchived: boolean

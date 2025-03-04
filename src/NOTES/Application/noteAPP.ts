@@ -13,14 +13,16 @@ export const validateTitleCreateNote = (title: string): null | string => {
     return null;
 }
 
-export const validateLocationToFiltred = (location: string): ClassNotes_E | null => {
-    if (typeof location !== 'string') return null;
+export const validateLocationToFiltred = (location: string): ClassNotes_E | '' => {
+    if (typeof location !== 'string') return '';
+
+    if (location === '/') return '';
 
     if (location === '/favoritos') return ClassNotes_E.FAV;
-    if (location === '/pendientes') return ClassNotes_E.COMPLETED;
+    if (location === '/pendientes') return ClassNotes_E.NOT_COMPLETED;
     if (location === '/completadas') return ClassNotes_E.COMPLETED;
     if (location === '/fijas') return ClassNotes_E.FIX;
     if (location === '/archivadas') return ClassNotes_E.ARCH;
 
-    return null;
+    return '';
 }

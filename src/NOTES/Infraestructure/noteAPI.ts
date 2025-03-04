@@ -22,6 +22,7 @@ export const createNewNote = async (id: string, title: string): Promise<string |
             id: id,
             creationDate: new Date().toLocaleDateString(),
             isArchived: false,
+            isNotCompleted: true,
             isCompleted: false,
             isFav: false,
             isFixed: false,
@@ -53,7 +54,7 @@ export const deleteNote = async (id: string): Promise<void | true> => {
 };
 
 {/* method: GET */ }
-export const getNotesByQuantity = async (lastID: string | null): Promise<Note_I[]> => {
+export const getBruteNotes = async (lastID: string | null): Promise<Note_I[]> => {
     if (!db) throw new DataBaseError("The database is not initialized.");
 
     try {
@@ -86,13 +87,13 @@ export const getNotesByQuantity = async (lastID: string | null): Promise<Note_I[
 };
 
 {/* method: GET */ }
-export const getGradesByClassAndByAmount = async (
+export const getFiltredByClassNotes = async (
     lastID: string | null,
-    classStyle: ClassNotes_E,
-    whereValue: boolean
+    classStyle: ClassNotes_E
 ) => {
     if (!db) throw new DataBaseError("The database is not initialized.");
 
+    console.log(classStyle);
     try {
         const tagsRef = collection(db, "NOTES");
         let q;
@@ -108,11 +109,11 @@ export const getGradesByClassAndByAmount = async (
             q = query(
                 tagsRef,
                 startAfter(lastDocSnap),
-                where(classStyle, "==", whereValue),
+                where(classStyle, "==", true),
                 limit(6)
             );
         } else {
-            q = query(tagsRef, where(classStyle, "==", whereValue), limit(6));
+            q = query(tagsRef, where(classStyle, "==", true), limit(6));
         }
 
         const querySnapshot = await getDocs(q);
