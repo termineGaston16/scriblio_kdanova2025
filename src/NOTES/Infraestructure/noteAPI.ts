@@ -18,6 +18,7 @@ export const createNewNote = async (id: string, title: string): Promise<string |
 
         const tagRef = doc(tagsCollection, id);
 
+        throw new Error();
         await setDoc(tagRef, {
             id: id,
             creationDate: new Date().toLocaleDateString(),

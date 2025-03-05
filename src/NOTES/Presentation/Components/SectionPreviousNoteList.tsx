@@ -7,9 +7,9 @@ import { ClassNotes_E } from "../../Domain/classNotes";
 import { useLocation } from "react-router-dom";
 import { validateLocationToFiltred } from "../../Application/noteAPP";
 import { Note_I } from "../../Domain/note";
-import { BruteNotesResponse, useGetBruteNotes } from "../Hooks/useGetBruteNotes";
-import { useGetFiltredByClassNotes } from "../Hooks/useGetGradesByClassAndByAmount";
-import { useQueryClient } from "@tanstack/react-query";
+import { useGetBruteNotes } from "../Hooks/useGetBruteNotes";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { useGetFiltredByClassNotes } from "../Hooks/useGetFiltredByClassNotes";
 
 export default function SectionPreviousNoteList() {
 
@@ -21,10 +21,10 @@ export default function SectionPreviousNoteList() {
     const emptyDataRef = useRef<boolean>(false);
 
     const [localBruteNotesList, setLocalBruteNotesList] = useState<Note_I[]>(() => {
-        return queryClient.getQueryData<BruteNotesResponse>(['bruteNotes'])?.pages.at(-1)?.notes ?? []
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes'])?.pages.at(-1) ?? []
     });
     const [localFilteredNotesList, setLocalFilteredNotesList] = useState<Note_I[]>(() => {
-        return queryClient.getQueryData<BruteNotesResponse>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.at(-1)?.notes ?? []
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.at(-1) ?? []
     });
 
 
@@ -52,13 +52,17 @@ export default function SectionPreviousNoteList() {
     useEffect(() => {
         const lastResponse = bruteNotes?.pages.at(-1);
         if (!lastResponse || lastResponse.length <= 0) return;
+        console.log(lastResponse);
+
 
         if (emptyDataRef.current) {
             emptyDataRef.current = false;
             setLocalBruteNotesList(lastResponse);
-        } else {
-            setLocalBruteNotesList(prevList => [...prevList, ...lastResponse]);
         }
+        console.count();
+        // else {
+        //     setLocalBruteNotesList(prevList => [...prevList, ...lastResponse]);
+        // }
     }, [bruteNotes?.pages])
 
     useEffect(() => {
