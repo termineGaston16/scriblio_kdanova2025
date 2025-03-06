@@ -15,15 +15,14 @@ export const useCreateNewNote = () => {
     return useMutation({
         mutationFn: (params: Props) => createNewNote(params.id, params.title),
         onMutate: async (params: Props) => {
+
             await queryClient.cancelQueries({ queryKey: ['bruteNotes'] });
 
             const bruteNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
-            if (!bruteNotesCache) return { previousCache: undefined };
+            if (!bruteNotesCache) return;
 
-            const lastPageIndex = bruteNotesCache.pages.length - 1;
-            if (!lastPageIndex) return { previousCache: undefined };
-
-            const newNote: Note_I = {
+            const pagesFiltred = bruteNotesCache.pages.filter(page => page.length > 0).flat();
+            const newPages = [...pagesFiltred, {
                 ...params,
                 creationDate: new Date().toLocaleDateString(),
                 isArchived: false,
@@ -32,19 +31,12 @@ export const useCreateNewNote = () => {
                 isFav: false,
                 isFixed: false,
                 modificationDate: null,
-            };
+            } as Note_I];
 
-            // Clonar y modificar la última página
-            const updatedPages = [...bruteNotesCache.pages];
-            updatedPages[lastPageIndex] = [...(updatedPages[lastPageIndex] || []), newNote]; // Agregamos la nueva nota al array
-
-            // Establecer la nueva caché
             queryClient.setQueryData(['bruteNotes'], {
                 ...bruteNotesCache,
-                pages: updatedPages,
+                pages: newPages,
             });
-
-            return { previousCache: bruteNotesCache };
         },
         onError: () => {
             queryClient.resetQueries({ queryKey: ['bruteNotes'] });

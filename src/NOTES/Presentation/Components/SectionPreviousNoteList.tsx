@@ -18,7 +18,6 @@ export default function SectionPreviousNoteList() {
 
     const location = useLocation();
     const [currentLinkValue, setCurrentLinkValue] = useState<ClassNotes_E | ''>(validateLocationToFiltred(location.pathname))
-    const emptyDataRef = useRef<boolean>(false);
 
     const [localBruteNotesList, setLocalBruteNotesList] = useState<Note_I[]>(() => {
         return queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes'])?.pages.at(-1) ?? []
@@ -27,13 +26,12 @@ export default function SectionPreviousNoteList() {
         return queryClient.getQueryData<InfiniteData<Note_I[]>>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.at(-1) ?? []
     });
 
-
     const {
         data: bruteNotes,
         fetchNextPage: fetchNextPageBruteNotes,
         hasNextPage: hasNextPageBruteNotes,
         isLoading: isLoadingBrutesNotes,
-        isError: isErrorBrutesNotes
+        isError: isErrorBrutesNotes,
     } = useGetBruteNotes(currentLinkValue);
 
     const {
@@ -41,41 +39,22 @@ export default function SectionPreviousNoteList() {
         fetchNextPage: fetchNextPageFiltredNotes,
         hasNextPage: hasNextPageFiltredNotes,
         isLoading: isLoadingFiltredNotes,
-        isError: isErrorFiltredNotes
+        isError: isErrorFiltredNotes,
     } = useGetFiltredByClassNotes(currentLinkValue as ClassNotes_E);
 
     useEffect(() => {
         setCurrentLinkValue(validateLocationToFiltred(location.pathname))
-        emptyDataRef.current = true;
     }, [location.pathname])
 
     useEffect(() => {
-        const lastResponse = bruteNotes?.pages.at(-1);
-        if (!lastResponse || lastResponse.length <= 0) return;
-        console.log(lastResponse);
-
-
-        if (emptyDataRef.current) {
-            emptyDataRef.current = false;
-            setLocalBruteNotesList(lastResponse);
-        }
-        console.count();
-        // else {
-        //     setLocalBruteNotesList(prevList => [...prevList, ...lastResponse]);
-        // }
-    }, [bruteNotes?.pages])
+        if (!bruteNotes || bruteNotes.pages.length === 0) return;
+        setLocalBruteNotesList(bruteNotes.pages.flat());
+    }, [bruteNotes?.pages]);
 
     useEffect(() => {
-        const lastResponse = filtredNotes?.pages.at(-1);
-        if (!lastResponse || lastResponse.length <= 0) return;
-
-        if (emptyDataRef.current) {
-            emptyDataRef.current = false;
-            setLocalFilteredNotesList(lastResponse);
-        } else {
-            setLocalFilteredNotesList(prevList => [...prevList, ...lastResponse]);
-        }
-    }, [filtredNotes?.pages])
+        if (!filtredNotes || filtredNotes.pages.length === 0) return;
+        setLocalFilteredNotesList(filtredNotes.pages.flat());
+    }, [filtredNotes?.pages]);
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastNote = useCallback((node: HTMLElement | null) => {

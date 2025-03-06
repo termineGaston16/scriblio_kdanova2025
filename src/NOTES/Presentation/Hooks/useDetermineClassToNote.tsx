@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query"
 import { ClassNotes_E } from "../../Domain/classNotes"
 import { determineClassToNote } from "../../Infraestructure/noteAPI"
 import { Note_I } from "../../Domain/note"
@@ -20,29 +20,33 @@ export const useDetermineClassToNote = () => {
             props.classStyle,
             props.value
         ),
-        onMutate: (props: Props) => {
-            queryClient.invalidateQueries({ queryKey: ['allNotes'] });
-            const prevListCache = queryClient.getQueryData(['allNotes']);
+        onMutate: async (props: Props) => {
+
+            await queryClient.cancelQueries({ queryKey: ['bruteNotes'] });
+
+            const brutesNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
+            if (!brutesNotesCache) return;
+
+            const pagesFiltred = brutesNotesCache.pages.filter(page => page.length > 0).flat();
             const { id, classStyle, value } = props;
 
-            queryClient.setQueryData(['allNotes'], (prevList: Note_I[] = []) => {
-                const index = prevList.findIndex(note => note.id === id);
-                if (index < 0) return prevList;
+            const index = pagesFiltred.findIndex(note => note.id === id);
+            if (index < 0) return;
 
-                const newList = [...prevList];
-                (newList[index])[classStyle] = value;
-                return newList;
+            const newPages = [...pagesFiltred];
+            newPages[index][classStyle] = value;
+
+            queryClient.setQueryData(['bruteNotes'], {
+                ...brutesNotesCache,
+                pages: newPages,
             });
-            return { prevListCache }
         },
-        onError: (_, __, context) => {
-            queryClient.setQueryData(['allNotes'], context?.prevListCache);
-            toast(
-                <div>No se pudo asignar clase </div>
-            );
+        onError: () => {
+            queryClient.resetQueries({ queryKey: ['bruteNotes'] });
+            toast(<div>La clase no pudo ser modificada</div>);
         },
         onSuccess: (response) => {
-            queryClient.invalidateQueries({ queryKey: ['allNotes'] });
+            queryClient.invalidateQueries({ queryKey: ['bruteNotes'] });
 
             if (typeof response === 'string') return response;
             if (typeof response === 'boolean' && response) {

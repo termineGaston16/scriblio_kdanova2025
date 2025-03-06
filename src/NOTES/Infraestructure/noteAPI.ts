@@ -18,7 +18,6 @@ export const createNewNote = async (id: string, title: string): Promise<string |
 
         const tagRef = doc(tagsCollection, id);
 
-        throw new Error();
         await setDoc(tagRef, {
             id: id,
             creationDate: new Date().toLocaleDateString(),
@@ -136,6 +135,7 @@ export const determineClassToNote = async (id: string, classStyle: ClassNotes_E,
         const noteRef = doc(db, "NOTES", id);
         const noteSnap = await getDoc(noteRef);
 
+        throw Error;
         if (noteSnap.exists()) {
             const data = noteSnap.data();
 

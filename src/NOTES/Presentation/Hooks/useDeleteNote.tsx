@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query"
 import { deleteNote } from "../../Infraestructure/noteAPI"
 import { toast } from "sonner";
 import { Note_I } from "../../Domain/note";
@@ -11,26 +11,30 @@ export const useDeleteNote = () => {
         mutationFn: (id: string) => deleteNote(id),
         onMutate: async (id: string) => {
 
-            await queryClient.cancelQueries({ queryKey: ['allNotes'] })
-            const prevListCache = queryClient.getQueryData(['allNotes']);
+            await queryClient.cancelQueries({ queryKey: ['bruteNotes'] });
 
-            queryClient.setQueryData(['allNotes'], (prevList: Note_I[] = []) => {
-                const index = prevList.findIndex(note => note.id === id);
-                if (index <= 0) return prevList;
+            const bruteNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
+            if (!bruteNotesCache) return;
 
-                const newList = [...prevList];
-                newList.splice(index, 1);
-                return newList;
-            })
+            const pagesFiltred = bruteNotesCache.pages.filter(page => page.length > 0).flat();
 
-            return { prevListCache }
+            const index = pagesFiltred.findIndex(nota => nota.id === id);
+            if (index < 0) return { previousCache: undefined };
+
+            const newPages = [...pagesFiltred];
+            newPages.splice(index, 1)
+
+            queryClient.setQueryData(['bruteNotes'], {
+                ...bruteNotesCache,
+                pages: newPages,
+            });
         },
-        onError: (_, __, context) => {
-            queryClient.setQueryData(['allNotes'], context?.prevListCache)
-            toast(`la nota no pudo eliminarse`)
+        onError: () => {
+            queryClient.resetQueries({ queryKey: ['bruteNotes'] });
+            toast(<div>No se pudo eliminar la nota</div>);
         },
         onSuccess: (reponse) => {
-            queryClient.invalidateQueries({ queryKey: ['allNotes'] });
+            queryClient.invalidateQueries({ queryKey: ['bruteNotes'] });
 
             if (typeof reponse === 'boolean' && reponse) {
                 toast(`nota eliminada correctamente`)
