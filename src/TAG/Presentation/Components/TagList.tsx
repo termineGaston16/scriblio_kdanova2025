@@ -45,6 +45,8 @@ export default function TagList() {
         if (!dataTagList || dataTagList.pages.length <= 0) return;
 
         setTagListLocal(dataTagList.pages.flat());
+
+        console.log(dataTagList.pages);
     }, [dataTagList?.pages])
 
     const observerRef = useRef<IntersectionObserver | null>(null);

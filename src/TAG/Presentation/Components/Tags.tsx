@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Tag_I } from "../../Domain/tag";
 import { FiMinusCircle } from "react-icons/fi";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDetermineTagToNote } from "../Hooks/useDetermineTagToNote";
 
 interface Props {
     tagListLocal: Tag_I[];
@@ -17,6 +18,7 @@ interface Props {
     } | null>>;
     setShowTagDeleteWarning: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
 
 const Tags: React.FC<Props> = ({
     tagListLocal,
@@ -33,12 +35,30 @@ const Tags: React.FC<Props> = ({
         estimateSize: () => 100, // Altura de cada elemento,    
     });
 
-    return (
-        // 📌 Contenedor con scroll
+    const {
+        mutate: mutateUseDetermineTagToNote,
+        data: dataUseDetermineTagToNote,
+        isSuccess: isSuccessUseDetermineTagToNote
+    } = useDetermineTagToNote();
+
+    const handleUseDetermineTagToNote = (e: React.DragEvent<HTMLLIElement>, idTag: string) => {
+        const idNote = e.dataTransfer.getData('idNote');
+        mutateUseDetermineTagToNote({
+            idNote: idNote,
+            idTag: idTag
+        });
+    }
+    const [alertAsingTagInNote, setAlertAsingTagInNote] = useState<boolean>(false);
+    useEffect(() => {
+        if (typeof dataUseDetermineTagToNote === 'boolean' && dataUseDetermineTagToNote || !dataUseDetermineTagToNote) return;
+        setAlertAsingTagInNote(true)
+    }, [isSuccessUseDetermineTagToNote])
+
+    return (<>
         <div
             ref={parentRef}
             style={{
-                height: 600, // Define una altura fija para el scroll
+                height: 600,
                 overflow: "auto",
             }}
         >
@@ -65,6 +85,14 @@ const Tags: React.FC<Props> = ({
                                 id: id,
                                 name: title
                             })}
+                            onMouseLeave={() => setShowOptionsTag(null)}
+
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => handleUseDetermineTagToNote(e, id)}
+                            onDragStart={(e) => e.preventDefault()}
+                            draggable={false}
+
+
                             style={{
                                 position: "absolute", // 📌 Posiciona los elementos correctamente
                                 top: 0,
@@ -98,7 +126,17 @@ const Tags: React.FC<Props> = ({
                 })}
             </ul>
         </div>
-    );
+
+        {
+            alertAsingTagInNote &&
+            <div>
+                <span>{dataUseDetermineTagToNote}</span>
+                <button
+                    onClick={() => setAlertAsingTagInNote(false)}
+                    type="button">Okey</button>
+            </div>
+        }
+    </>);
 };
 
 export default Tags;

@@ -1,4 +1,4 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, updateDoc, where } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, updateDoc, where } from "firebase/firestore";
 import { DataBaseError, DataBaseSystemFailure } from "../../TAG/Infraestructure/tagError";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
@@ -129,9 +129,9 @@ export const getFiltredByClassNotes = async (
 
 {/* method: PATCH */ }
 export const determineClassToNote = async (id: string, classStyle: ClassNotes_E, value: boolean): Promise<string | true> => {
-    if (!db) throw new DataBaseError("The database is not initialized.");
-
     try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
         const noteRef = doc(db, "NOTES", id);
         const noteSnap = await getDoc(noteRef);
 
@@ -147,6 +147,46 @@ export const determineClassToNote = async (id: string, classStyle: ClassNotes_E,
         } else {
             return 'no se ha encontrado la nota en el sistema. Compruebe que aún exista.'
         }
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}
+
+{/* method: PATCH */ }
+export const determineTagToNote = async (idNote: string, idTag: string): Promise<string | true> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        const tagRef = doc(db, "TAGS", idTag);
+        const tagSnap = await getDoc(tagRef);
+
+        if (!tagSnap.exists()) {
+            return `No se encontró el Tag. Compruebe que aún siga existiendo.`
+        }
+
+        const tagData = tagSnap.data();
+
+        // 2️⃣ Verificar si el documento ya tiene el idNote en "notesInThisTag"
+        if (tagData.notesInThisTag?.includes(idNote)) {
+            return `Esta Nota ya está en este tag`
+        }
+
+        // 3️⃣ Buscar si la nota existe en la colección NOTES
+        const noteRef = doc(db, "NOTES", idNote);
+        const noteSnap = await getDoc(noteRef);
+
+        if (!noteSnap.exists()) {
+            return `No se encontró la nota. Compruebe que aún siga existiendo.`
+        }
+
+        // 4️⃣ Agregar el idNote al array "notesInThisTag" en TAGS
+        await updateDoc(tagRef, {
+            notesInThisTag: arrayUnion(idNote)
+        });
+
+        return true;
+
     } catch (error) {
         if (error instanceof DataBaseError) throw error;
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
