@@ -15,7 +15,12 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
 
     const [messageInfo, setMessageInfo] = useState<string | null>(null);
 
-    const { mutate, isSuccess, data } = useAddNewTag()
+    const {
+        mutate: mutateUseAddNewTag,
+        isSuccess: isSuccessUseAddNewTag,
+        data: dataUseAddNewTag
+    } = useAddNewTag();
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -26,12 +31,12 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
         if (errorMessage) return dispatch(addMessage(errorMessage));
         dispatch(cleanMessage());
 
-        mutate({ title: titleTag, colorTag: colorTag, id: crypto.randomUUID() as string });
+        mutateUseAddNewTag({ title: titleTag, colorTag: colorTag, id: crypto.randomUUID() as string });
     };
 
     useEffect(() => {
-        if (isSuccess && typeof data === 'boolean' && data) closeForm();
-    }, [isSuccess])
+        if (isSuccessUseAddNewTag && typeof dataUseAddNewTag === 'boolean' && dataUseAddNewTag) closeForm();
+    }, [isSuccessUseAddNewTag])
 
     return (<>
         <form onSubmit={handleSubmit}>
@@ -75,9 +80,9 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
         </form>
 
         {
-            data &&
+            typeof dataUseAddNewTag === 'string' &&
             <div>
-                {data}
+                {dataUseAddNewTag}
                 <button
                     onClick={() => closeForm()}
                     type="button">Okey</button>

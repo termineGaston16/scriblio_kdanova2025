@@ -20,10 +20,10 @@ export default function SectionPreviousNoteList() {
     const [currentLinkValue, setCurrentLinkValue] = useState<ClassNotes_E | ''>(validateLocationToFiltred(location.pathname))
 
     const [localBruteNotesList, setLocalBruteNotesList] = useState<Note_I[]>(() => {
-        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes'])?.pages.at(-1) ?? []
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes'])?.pages.flat() ?? []
     });
     const [localFilteredNotesList, setLocalFilteredNotesList] = useState<Note_I[]>(() => {
-        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.at(-1) ?? []
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.flat() ?? []
     });
 
     const {

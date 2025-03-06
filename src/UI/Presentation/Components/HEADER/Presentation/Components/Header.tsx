@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import TagList from "../../../../../../TAG/Presentation/Components/TagList";
 import Navbar from "../../../NAVBAR/Presentation/Components/Navbar";
-import { ListLocalProvider } from "../../../../../../TAG/Presentation/Context/listLocalContext";
 
 export default function Header() {
     return (
@@ -12,10 +11,7 @@ export default function Header() {
             </Link>
 
             <Navbar />
-
-            {/* <ListLocalProvider>
-                <TagList />
-            </ListLocalProvider> */}
+            <TagList />
         </header>
     )
 

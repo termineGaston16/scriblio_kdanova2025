@@ -27,7 +27,9 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        <Header />
+                        <TagList />
+
+                        {/* <Header />
 
                         <Routes>
                             <Route path="*" element={'Page Not Found'} />
@@ -35,7 +37,7 @@ export default function App() {
                             {parametersToFilterNotes.map((path) => (
                                 <Route key={path} path={path} element={<SectionPreviousNoteList />} />
                             ))}
-                        </Routes>
+                        </Routes> */}
 
                     </BrowserRouter>
                 </QueryClientProvider>
@@ -43,5 +45,3 @@ export default function App() {
         </React.StrictMode >
     )
 }
-
-// ListLocalProvider: [TagList]

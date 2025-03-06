@@ -38,7 +38,7 @@ const Tags: React.FC<Props> = ({
         <div
             ref={parentRef}
             style={{
-                height: 200, // Define una altura fija para el scroll
+                height: 600, // Define una altura fija para el scroll
                 overflow: "auto",
             }}
         >

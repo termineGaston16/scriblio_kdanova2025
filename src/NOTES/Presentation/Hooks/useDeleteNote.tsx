@@ -16,7 +16,7 @@ export const useDeleteNote = () => {
             const bruteNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
             if (!bruteNotesCache) return;
 
-            const pagesFiltred = bruteNotesCache.pages.filter(page => page.length > 0).flat();
+            const pagesFiltred = bruteNotesCache.pages.flat();
 
             const index = pagesFiltred.findIndex(nota => nota.id === id);
             if (index < 0) return { previousCache: undefined };

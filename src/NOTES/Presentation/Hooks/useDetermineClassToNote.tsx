@@ -27,7 +27,7 @@ export const useDetermineClassToNote = () => {
             const brutesNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
             if (!brutesNotesCache) return;
 
-            const pagesFiltred = brutesNotesCache.pages.filter(page => page.length > 0).flat();
+            const pagesFiltred = brutesNotesCache.pages.flat();
             const { id, classStyle, value } = props;
 
             const index = pagesFiltred.findIndex(note => note.id === id);
@@ -48,7 +48,6 @@ export const useDetermineClassToNote = () => {
         onSuccess: (response) => {
             queryClient.invalidateQueries({ queryKey: ['bruteNotes'] });
 
-            if (typeof response === 'string') return response;
             if (typeof response === 'boolean' && response) {
                 toast(`clase asignada correctamente`)
             };

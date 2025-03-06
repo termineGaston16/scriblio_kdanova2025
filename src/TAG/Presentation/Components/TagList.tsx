@@ -2,12 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AiFillPlusCircle } from "react-icons/ai";
 import { BsFillInfoCircleFill } from "react-icons/bs";
 import WarningBlockToRemove from "../../../UI/ALERTS/Presentation/Components/WarningBlockToRemove";
-import { useListTagByQuantity } from "../Hooks/useListTagByQuantity";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
 import FormToCreateNewTag from "./FormToCreateNewTag";
-import { useListLocalContext } from "../Context/listLocalContext";
 import { Toaster } from "sonner";
 import Tags from "./Tags";
+import { Tag_I } from "../../Domain/tag";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { useGetTags } from "../Hooks/useGetTags";
 import { useRemoveTag } from "../Hooks/useRemoveTag";
 
 
@@ -15,54 +16,51 @@ export default function TagList() {
 
     const [showInfoCreateTag, setShowInfoCreateTag] = useState<boolean>(false);
     const [showInfoTag, setShowInfoTag] = useState<boolean>(false);
-
+    const [showTagDeleteWarning, setShowTagDeleteWarning] = useState<boolean>(false);
+    const [formToCreateNewTag, setFormToCreateNewTag] = useState<boolean>(false);
     const [showOptionsTag, setShowOptionsTag] = useState<{
-        id: string,
-        name: string
-    } | null>(null)
-    const [showTagDeleteWarning, setShowTagDeleteWarning] = useState<boolean>(false)
+        id: string;
+        name: string;
+    } | null>(null);
 
-    const { tagListLocal, setTagListLocal } = useListLocalContext()
-    const lastItemLocalRef = useRef<string>('')
-    const { data, isLoading, isError, refetch, isFetching } = useListTagByQuantity(lastItemLocalRef.current)
+    const queryClient = useQueryClient();
+    const [tagListLocal, setTagListLocal] = useState<Tag_I[]>(() => {
+        return queryClient.getQueryData<InfiniteData<Tag_I[]>>(['tagList'])?.pages.flat() ?? [];
+    });
 
-    const [formToCreateNewTag, setFormToCreateNewTag] = useState<boolean>(false)
+    const {
+        data: dataTagList,
+        hasNextPage: hasNextPageTagList,
+        fetchNextPage: fetchNextPageTagList,
+        isLoading: isLoadingTagList,
+        isError: isErrorTagList,
+        isFetching: isFetchingTagList
+    } = useGetTags();
 
-    const { mutate } = useRemoveTag()
+    const {
+        mutate: mutateUseRemoveTag
+    } = useRemoveTag();
 
     useEffect(() => {
-        if (!data || data.length <= 0) return;
+        if (!dataTagList || dataTagList.pages.length <= 0) return;
 
-        setTagListLocal(prevList => [...prevList, ...data]);
-    }, [data]);
-
+        setTagListLocal(dataTagList.pages.flat());
+    }, [dataTagList?.pages])
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastItem = useCallback((node: HTMLElement | null) => {
         if (!node) return;
         if (observerRef.current) observerRef.current.disconnect();
 
-        observerRef.current = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                setTagListLocal(prevList => {
-                    if (prevList.length > 0) {
-                        const lastItemInList = prevList[prevList.length - 1]?.id;
-                        if (lastItemInList !== lastItemLocalRef.current) {
-                            lastItemLocalRef.current = lastItemInList;
-                            refetch();
-                        }
-                    }
-                    return prevList;
-                });
+        observerRef.current = new IntersectionObserver((e) => {
+            if (e[0].isIntersecting) {
+                if (hasNextPageTagList) fetchNextPageTagList();
             }
-        }, {
-            root: null,
-            rootMargin: '0px',
-            threshold: .5
-        });
+        })
 
-        observerRef.current.observe(node);
-    }, []);
+        if (node) observerRef.current.observe(node);
+    }, [hasNextPageTagList])
+
 
     return (<>
         <section>
@@ -94,10 +92,10 @@ export default function TagList() {
 
             <Tags
                 lastItem={lastItem}
-                setShowOptionsTag={setShowOptionsTag}
                 setShowTagDeleteWarning={setShowTagDeleteWarning}
-                showOptionsTag={showOptionsTag}
                 tagListLocal={tagListLocal}
+                setShowOptionsTag={setShowOptionsTag}
+                showOptionsTag={showOptionsTag}
             />
         </section >
 
@@ -112,7 +110,7 @@ export default function TagList() {
                 option2Fc={() => {
                     if (!showOptionsTag) return;
 
-                    mutate(showOptionsTag?.id)
+                    mutateUseRemoveTag(showOptionsTag?.id)
                     setShowTagDeleteWarning(false)
                 }}
             />
@@ -120,13 +118,25 @@ export default function TagList() {
 
 
         <AsynchronousResponse
-            isLoading={isLoading || isFetching}
-            isError={isError}
+            isLoading={isLoadingTagList || isFetchingTagList}
+            isError={isErrorTagList}
             loadingComponent={
-                <span>Cargando Tags...</span>
+                <span
+                    style={{
+                        position: 'absolute',
+                        top: '0px',
+                        right: '0px',
+                        backgroundColor: 'yellow'
+                    }}
+                >Cargando más notas...</span>
             }
             errorComponent={
-                <span>Error al obtener Tags</span>
+                <span style={{
+                    position: 'absolute',
+                    top: '0px',
+                    right: '0px',
+                    backgroundColor: 'red'
+                }}>Error al obtener notas</span>
             }
         />
 

@@ -21,7 +21,7 @@ export const useCreateNewNote = () => {
             const bruteNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
             if (!bruteNotesCache) return;
 
-            const pagesFiltred = bruteNotesCache.pages.filter(page => page.length > 0).flat();
+            const pagesFiltred = bruteNotesCache.pages.flat();
             const newPages = [...pagesFiltred, {
                 ...params,
                 creationDate: new Date().toLocaleDateString(),
@@ -44,7 +44,6 @@ export const useCreateNewNote = () => {
         },
         onSuccess: (response) => {
             queryClient.invalidateQueries({ queryKey: ['bruteNotes'] });
-            if (typeof response === 'string') return response;
             if (typeof response === 'boolean' && response) {
                 toast(
                     <div> nota creada correctamente</div>

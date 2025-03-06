@@ -1,43 +1,45 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query"
 import { addNewTag } from "../../Infraestructure/tagAPI"
-import { toast } from "sonner";
 import { Tag_I } from "../../Domain/tag";
+import { toast } from "sonner";
 
-interface NewTagData {
-    title: string;
-    colorTag: string;
+interface Props {
+    title: string,
+    colorTag: string,
     id: string
 }
 
 export const useAddNewTag = () => {
 
-    const queryclient = useQueryClient();
+    const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (newTag: NewTagData) => addNewTag(newTag.title, newTag.colorTag, newTag.id),
-        onMutate: async (newTag: NewTagData) => {
+        mutationFn: (props: Props) => addNewTag(props.title, props.colorTag, props.id),
+        onMutate: async (props) => {
+            await queryClient.cancelQueries({ queryKey: ['tagList'] });
 
-            await queryclient.cancelQueries({ queryKey: ['listTag'] });
-            const prevCache = queryclient.getQueryData(['listTag']);
+            const tagListCache = queryClient.getQueryData<InfiniteData<Tag_I[]>>(['tagList']);
+            if (!tagListCache) return;
+            const pagesFiltred = tagListCache.pages.flat();
 
-            queryclient.setQueryData(['listTag'], (prevList: Tag_I[] = []) => {
-                return [...prevList, {
-                    ...newTag,
+            const { id, colorTag, title } = props;
+            queryClient.setQueryData(['tagList'], {
+                ...tagListCache,
+                pages: [...pagesFiltred, {
+                    id: id,
+                    colorTag: colorTag,
+                    title: title,
                     notesInThisTag: []
-                }]
-            })
-
-            return { prevCache }
+                } as Tag_I]
+            });
         },
-        onError: (_, __, context) => {
-            queryclient.setQueryData(['listTag'], context?.prevCache);
-            toast(<div>no fue posible crearlo</div>);
+        onError: () => {
+            queryClient.resetQueries({ queryKey: ['tagList'] })
+            toast(<div>No se ha logrado añadir la Tag</div>);
         },
         onSuccess: (response) => {
-            queryclient.invalidateQueries({ queryKey: ['listTag'] });
-
-            if (typeof response === 'string') return response;
-            if (typeof response === 'boolean' && response) toast(<div>creado con éxito!</div>)
+            queryClient.invalidateQueries({ queryKey: ['tagList'] });
+            if (typeof response === 'boolean' && response) return toast(<div>Tag agregado correctamnte</div>);
         }
-    });
-};
+    })
+}

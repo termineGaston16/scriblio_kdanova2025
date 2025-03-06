@@ -3,12 +3,15 @@ import { Tag_I } from "../Domain/tag";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { DataBaseError, DataBaseSystemFailure } from "./tagError";
 
-{/* method: GET */ }
-export const listTagByQuantity = async (lastID: string | null): Promise<Tag_I[]> => {
+export const LIMIT_TAGS = 2;
+export const MAX_TAGS = 50;
 
-    if (!db) throw new DataBaseError("The database is not initialized.");
+{/* method: GET */ }
+export const getTags = async (lastID: string | null): Promise<Tag_I[]> => {
 
     try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
         const tagsRef = collection(db, "TAGS");
         let q;
 
@@ -20,9 +23,9 @@ export const listTagByQuantity = async (lastID: string | null): Promise<Tag_I[]>
                 return [];
             }
 
-            q = query(tagsRef, orderBy("id"), startAfter(lastDocSnap), limit(4));
+            q = query(tagsRef, orderBy("id"), startAfter(lastDocSnap), limit(LIMIT_TAGS));
         } else {
-            q = query(tagsRef, orderBy("id"), limit(4));
+            q = query(tagsRef, orderBy("id"), limit(LIMIT_TAGS));
         }
 
         const querySnapshot = await getDocs(q);
@@ -48,7 +51,7 @@ export const addNewTag = async (title: string, colorTag: string, id: string): Pr
         const snapshot = await getDocs(tagsCollection);
         const tagCount = snapshot.size;
 
-        if (tagCount >= 50) return "Se ha alcanzado el límite de 50 tags.";
+        if (tagCount >= MAX_TAGS) return `Se ha alcanzado el límite de ${MAX_TAGS} tags.`;
 
         const tagRef = doc(tagsCollection, id);
 
