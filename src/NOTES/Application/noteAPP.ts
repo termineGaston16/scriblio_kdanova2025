@@ -15,8 +15,7 @@ export const validateTitleCreateNote = (title: string): null | string => {
 
 export const validateLocationToFiltred = (location: string): ClassNotes_E | '' => {
     if (typeof location !== 'string') return '';
-
-    if (location === '/') return '';
+    if (location === '/') return ''
 
     if (location === '/favoritos') return ClassNotes_E.FAV;
     if (location === '/pendientes') return ClassNotes_E.NOT_COMPLETED;

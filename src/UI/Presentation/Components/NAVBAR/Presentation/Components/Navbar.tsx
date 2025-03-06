@@ -8,31 +8,43 @@ import { IoArchiveOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useDetermineClassToNote } from "../../../../../../NOTES/Presentation/Hooks/useDetermineClassToNote";
 import { validateLocationToFiltred } from "../../../../../../NOTES/Application/noteAPP";
+import { useDeleteNote } from "../../../../../../NOTES/Presentation/Hooks/useDeleteNote";
+import { ClassNotes_E } from "../../../../../../NOTES/Domain/classNotes";
 
 export default function Navbar() {
 
     const [showInfoNavbar, setShowInfoNavbar] = useState<boolean>(false);
     const [showAlertError, setShowAlertError] = useState<boolean>(false);
-    const { mutate, data, isSuccess } = useDetermineClassToNote();
+    const {
+        mutate: mutateUseDetermineClassToNote,
+        data: dataUseDetermineClassToNote,
+        isSuccess: isSuccessUseDetermineClassToNote
+    } = useDetermineClassToNote();
+
+    const {
+        mutate: mutateUseDeleteNote,
+    } = useDeleteNote();
+
 
     const handleDropNavbar = (e: React.DragEvent<HTMLLIElement>, zone: string) => {
         e.preventDefault();
-        if (zone === 'borrar nota') return;
 
         const idNote = e.dataTransfer.getData('idNote');
-        const classStyle = validateLocationToFiltred(zone);
-        if (!classStyle) return;
+        if (zone === 'deleteNote') return mutateUseDeleteNote(idNote);
 
-        mutate({
+        const classStyle = validateLocationToFiltred(zone);
+        if (classStyle.length <= 0) return;
+
+        mutateUseDetermineClassToNote({
             id: idNote,
-            classStyle: classStyle,
+            classStyle: classStyle as ClassNotes_E,
             value: true
         })
     }
 
     useEffect(() => {
-        if (typeof data === 'string') setShowAlertError(true);
-    }, [isSuccess])
+        if (typeof dataUseDetermineClassToNote === 'string') setShowAlertError(true);
+    }, [isSuccessUseDetermineClassToNote])
 
     return (<>
         <nav>
@@ -65,11 +77,16 @@ export default function Navbar() {
                 <li
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/favoritos')}
+
+                    onDragStart={(e) => e.preventDefault()}
+                    draggable={false}
+
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
                     }}>
-                    <Link to={'/favoritos'}>
+                    <Link
+                        to={'/favoritos'}>
                         <span>favoritos</span>
                         <IoIosStarOutline />
                     </Link>
@@ -77,6 +94,8 @@ export default function Navbar() {
                 <li
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/pendientes')}
+                    onDragStart={(e) => e.preventDefault()}
+                    draggable={false}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -89,6 +108,8 @@ export default function Navbar() {
                 <li
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/completadas')}
+                    onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
+                    draggable={false}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -101,6 +122,8 @@ export default function Navbar() {
                 <li
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/fijas')}
+                    onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
+                    draggable={false}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -113,6 +136,8 @@ export default function Navbar() {
                 <li
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/archivadas')}
+                    onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
+                    draggable={false}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -124,17 +149,16 @@ export default function Navbar() {
                 </li>
                 <li
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => handleDropNavbar(e, 'borrar nota')}
+                    onDrop={(e) => handleDropNavbar(e, 'deleteNote')}
+                    onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
+                    draggable={false}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
                     }}>
-                    <button
-                        type="button"
-                    >
-                        <span>borrar nota</span>
-                        <TiDeleteOutline />
-                    </button>
+
+                    <span>borrar nota</span>
+                    <TiDeleteOutline />
                 </li>
             </ul>
         </nav>
@@ -142,7 +166,7 @@ export default function Navbar() {
         {
             showAlertError &&
             <div>
-                {data}
+                {dataUseDetermineClassToNote}
                 <button
                     onClick={() => setShowAlertError(false)}
                     type="button">
