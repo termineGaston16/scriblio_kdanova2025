@@ -12,8 +12,8 @@ export const useGetTagsFromNote = (id: string | null) => {
         gcTime: 60 * 60 * 1000,
         placeholderData: keepPreviousData,
         refetchOnWindowFocus: false,
-        retry: 2,
-        retryDelay: 2000,
+        retry: 5,
+        retryDelay: 5000,
         staleTime: 60 * 60 * 1000
     })
 };

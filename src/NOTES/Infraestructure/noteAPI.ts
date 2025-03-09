@@ -4,6 +4,7 @@ import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
 import { ClassNotes_E } from "../Domain/classNotes";
 import { Tag_I } from "../../TAG/Domain/tag";
+import { createNoteBody } from "../NOTES-BODY/Infraestructure/note_bodyAPI";
 
 export const GET_NOTES_LIMIT = 10;
 
@@ -21,6 +22,7 @@ export const createNewNote = async (id: string, title: string): Promise<string |
         if (tagCount >= 200) return "Se ha alcanzado el límite de 200 notas.";
 
         const tagRef = doc(tagsCollection, id);
+        await createNoteBody(id);
 
         await setDoc(tagRef, {
             id: id,
