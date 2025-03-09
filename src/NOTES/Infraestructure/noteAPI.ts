@@ -3,6 +3,7 @@ import { DataBaseError, DataBaseSystemFailure } from "../../TAG/Infraestructure/
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { Note_I } from "../Domain/note";
 import { ClassNotes_E } from "../Domain/classNotes";
+import { Tag_I } from "../../TAG/Domain/tag";
 
 export const GET_NOTES_LIMIT = 10;
 
@@ -236,6 +237,44 @@ export const getNotesByTitle = async (keyword: string, lastID: string | null): P
             throw error;
         }
 
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}
+
+{/* method: GET */ }
+export const getNoteByID = async (id: string): Promise<Note_I | null> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        const noteRef = doc(db, "NOTES", id);
+        const noteSnap = await getDoc(noteRef);
+
+        if (noteSnap.exists()) {
+            return { id: noteSnap.id, ...noteSnap.data() } as Note_I;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}
+
+{/* method: GET */ }
+export const getTagsFromNote = async (idNote: string): Promise<Tag_I['title'][]> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        const tagsCollectionRef = collection(db, "TAGS");
+
+        const q = query(tagsCollectionRef, where("notesInThisTag", "array-contains", idNote));
+        const querySnapshot = await getDocs(q);
+
+        const tagTitles: string[] = querySnapshot.docs.map((doc) => doc.data().title);
+
+        return tagTitles;
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 }

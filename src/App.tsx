@@ -7,8 +7,8 @@ import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/
 import React from "react";
 import { IDTagParamProvider } from "./TAG/Presentation/Context/idTagParamContext";
 import Toolbar from "./UI/TOOLBAR/Presentation/Components/Toolbar";
-import Navbar from "./UI/Presentation/Components/NAVBAR/Presentation/Components/Navbar";
 import { WordSearchProvider } from "./UI/TOOLBAR/Presentation/Context/WordSearchContext";
+import NoteContainer from "./NOTES/Presentation/Components/NoteContainer";
 
 
 export default function App() {
@@ -30,10 +30,10 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        <WordSearchProvider>
-                            <Toolbar />
 
-                            {/* <IDTagParamProvider>
+
+                        <WordSearchProvider>
+                            <IDTagParamProvider>
                                 <Header />
                                 <Toolbar />
 
@@ -43,8 +43,9 @@ export default function App() {
                                     {parametersToFilterNotes.map((path) => (
                                         <Route key={path} path={path} element={<SectionPreviousNoteList />} />
                                     ))}
+                                    <Route path={"nota=id/:IDNote_url"} element={<NoteContainer />} />
                                 </Routes>
-                            </IDTagParamProvider> */}
+                            </IDTagParamProvider>
                         </WordSearchProvider>
 
                     </BrowserRouter>
