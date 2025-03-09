@@ -1,4 +1,4 @@
-import { keepPreviousData, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { getNotesByTitle } from "../../Infraestructure/noteAPI";
 
 export const useGetNotesByTitle = (keyword: string) => {
@@ -17,5 +17,6 @@ export const useGetNotesByTitle = (keyword: string) => {
         retry: 2,
         retryDelay: 2000,
         staleTime: 60 * 60 * 1000,
+
     });
 };
