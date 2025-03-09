@@ -7,5 +7,6 @@ export interface Note_I {
     isNotCompleted: boolean,
     isCompleted: boolean,
     isFixed: boolean,
-    isArchived: boolean
+    isArchived: boolean,
+    titleLowerCase: string
 }

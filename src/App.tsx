@@ -6,6 +6,9 @@ import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPrev
 import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/Header";
 import React from "react";
 import { IDTagParamProvider } from "./TAG/Presentation/Context/idTagParamContext";
+import Toolbar from "./UI/TOOLBAR/Presentation/Components/Toolbar";
+import Navbar from "./UI/Presentation/Components/NAVBAR/Presentation/Components/Navbar";
+import { WordSearchProvider } from "./UI/TOOLBAR/Presentation/Context/WordSearchContext";
 
 
 export default function App() {
@@ -27,17 +30,20 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        <IDTagParamProvider>
-                            <Header />
+                        <WordSearchProvider>
+                            <IDTagParamProvider>
+                                <Header />
+                                <Toolbar />
 
-                            <Routes>
-                                <Route path="*" element={'Page Not Found'} />
+                                <Routes>
+                                    <Route path="*" element={'Page Not Found'} />
 
-                                {parametersToFilterNotes.map((path) => (
-                                    <Route key={path} path={path} element={<SectionPreviousNoteList />} />
-                                ))}
-                            </Routes>
-                        </IDTagParamProvider>
+                                    {parametersToFilterNotes.map((path) => (
+                                        <Route key={path} path={path} element={<SectionPreviousNoteList />} />
+                                    ))}
+                                </Routes>
+                            </IDTagParamProvider>
+                        </WordSearchProvider>
 
                     </BrowserRouter>
                 </QueryClientProvider>
@@ -46,4 +52,4 @@ export default function App() {
     )
 }
 
-// IDTagParamProvider: Header, SectionPreviousNoteList
+// IDTagParamProvider, WordSearchProvider: Header, SectionPreviousNoteList

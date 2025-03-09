@@ -11,6 +11,7 @@ import { validateLocationToFiltred } from "../../../../../../NOTES/Application/n
 import { useDeleteNote } from "../../../../../../NOTES/Presentation/Hooks/useDeleteNote";
 import { ClassNotes_E } from "../../../../../../NOTES/Domain/classNotes";
 import { useIDTagParamContext } from "../../../../../../TAG/Presentation/Context/idTagParamContext";
+import { useWordSearchContext } from "../../../../../TOOLBAR/Presentation/Context/WordSearchContext";
 
 export default function Navbar() {
 
@@ -48,6 +49,7 @@ export default function Navbar() {
     }, [isSuccessUseDetermineClassToNote])
 
     const { setShowListByTag } = useIDTagParamContext();
+    const { setShowLisSearch } = useWordSearchContext();
 
     return (<>
         <nav>
@@ -68,7 +70,10 @@ export default function Navbar() {
                 flexDirection: 'column'
             }}>
                 <li
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -85,7 +90,10 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()}
                     draggable={false}
 
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -102,7 +110,10 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()}
                     draggable={false}
 
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -118,7 +129,10 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
 
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -134,7 +148,10 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
 
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -150,7 +167,10 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
 
-                    onClick={() => setShowListByTag(false)}
+                    onClick={() => {
+                        setShowListByTag(false)
+                        setShowLisSearch(false)
+                    }}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'

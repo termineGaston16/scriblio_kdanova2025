@@ -12,6 +12,8 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { useGetFiltredByClassNotes } from "../Hooks/useGetFiltredByClassNotes";
 import { useFilterNotesByTag } from "../../../TAG/Presentation/Hooks/useFilterNotesByTag";
 import { useIDTagParamContext } from "../../../TAG/Presentation/Context/idTagParamContext";
+import { useWordSearchContext } from "../../../UI/TOOLBAR/Presentation/Context/WordSearchContext";
+import { useGetNotesByTitle } from "../Hooks/useGetNotesByTitle";
 
 export default function SectionPreviousNoteList() {
 
@@ -32,6 +34,11 @@ export default function SectionPreviousNoteList() {
     const { idTagParam, showListByTag } = useIDTagParamContext();
     const [localNotesByTag, setLocalNotesByTag] = useState<Note_I[]>(() => {
         return queryClient.getQueryData<InfiniteData<Note_I[]>>(['notesByTag', idTagParam])?.pages.flat() ?? []
+    });
+
+    const { wordSearch, showListSearch } = useWordSearchContext();
+    const [localNotesByTitle, setLocalNotesByTitle] = useState<Note_I[]>(() => {
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['notesByTag', wordSearch])?.pages.flat() ?? []
     });
 
     const {
@@ -61,10 +68,20 @@ export default function SectionPreviousNoteList() {
         isFetching: isFetchingNotesByTag
     } = useFilterNotesByTag(idTagParam);
 
+    const {
+        data: dataNotesByTitle,
+        fetchNextPage: fetchNextPageNotesByTitle,
+        hasNextPage: hasNextPageNotesByTitle,
+        isLoading: isLoadingNotesByTitle,
+        isError: isErrorNotesByTitle,
+        isFetching: isFetchingNotesByTitle
+    } = useGetNotesByTitle(wordSearch);
+
     useEffect(() => {
         setCurrentLinkValue(validateLocationToFiltred(location.pathname))
 
         setLocalNotesByTag([])
+        setLocalNotesByTitle([])
     }, [location.pathname])
 
     useEffect(() => {
@@ -73,6 +90,7 @@ export default function SectionPreviousNoteList() {
 
         setLocalFilteredNotesList([])
         setLocalNotesByTag([]);
+        setLocalNotesByTitle([]);
     }, [bruteNotes?.pages]);
 
     useEffect(() => {
@@ -81,6 +99,7 @@ export default function SectionPreviousNoteList() {
 
         setLocalBruteNotesList([]);
         setLocalNotesByTag([]);
+        setLocalNotesByTitle([]);
     }, [filtredNotes?.pages]);
 
     useEffect(() => {
@@ -88,8 +107,21 @@ export default function SectionPreviousNoteList() {
         setLocalNotesByTag(dataNotesByTag.pages.flat());
 
         setLocalBruteNotesList([]);
-        setLocalFilteredNotesList([])
-    }, [dataNotesByTag?.pages])
+        setLocalFilteredNotesList([]);
+        setLocalNotesByTitle([]);
+    }, [dataNotesByTag?.pages]);
+
+    useEffect(() => {
+        if (!dataNotesByTitle || dataNotesByTitle.pages.length <= 0) return;
+        setLocalNotesByTitle(dataNotesByTitle.pages.flat());
+
+        setLocalBruteNotesList([]);
+        setLocalFilteredNotesList([]);
+        setLocalNotesByTag([]);
+    }, [dataNotesByTitle?.pages]);
+
+
+
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastNote = useCallback((node: HTMLElement | null) => {
@@ -103,6 +135,7 @@ export default function SectionPreviousNoteList() {
                 if (Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
                     && hasNextPageFiltredNotes) fetchNextPageFiltredNotes();
                 if (showListByTag && hasNextPageNotesByTag) fetchNextPageNotesByTag();
+                if (showListSearch && hasNextPageNotesByTitle) fetchNextPageNotesByTitle();
             }
         }, {
             root: null,
@@ -111,7 +144,13 @@ export default function SectionPreviousNoteList() {
         })
 
         if (node) observerRef.current.observe(node);
-    }, [hasNextPageBruteNotes, showListByTag, hasNextPageNotesByTag]);
+    }, [
+        hasNextPageBruteNotes,
+        showListByTag,
+        hasNextPageNotesByTag,
+        showListSearch,
+        hasNextPageNotesByTitle
+    ]);
 
     return (<>
         <section style={{ backgroundColor: '#aae1dd' }}>
@@ -123,13 +162,14 @@ export default function SectionPreviousNoteList() {
 
             <NotePreviewList
                 listNoteLocal={
-                    showListByTag ? localNotesByTag :
+                    showListSearch ? localNotesByTitle :
+                        showListByTag ? localNotesByTag :
 
-                        currentLinkValue.length <= 0
-                            ? localBruteNotesList
-                            : Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
-                                ? localFilteredNotesList
-                                : []
+                            currentLinkValue.length <= 0
+                                ? localBruteNotesList
+                                : Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
+                                    ? localFilteredNotesList
+                                    : []
                 }
                 lastNote={lastNote}
             />
@@ -153,8 +193,15 @@ export default function SectionPreviousNoteList() {
                     || isFetchingFiltredNotes
                     || isLoadingNotesByTag
                     || isFetchingNotesByTag
+                    || isLoadingNotesByTitle
+                    || isFetchingNotesByTitle
                 }
-                isError={isErrorBrutesNotes || isErrorFiltredNotes || isErrorNotesByTag}
+                isError={
+                    isErrorBrutesNotes
+                    || isErrorFiltredNotes
+                    || isErrorNotesByTag
+                    || isErrorNotesByTitle
+                }
                 loadingComponent={
                     <span
                         style={{

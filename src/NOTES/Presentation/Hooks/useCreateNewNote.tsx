@@ -30,7 +30,7 @@ export const useCreateNewNote = () => {
                 isNotCompleted: true,
                 isFav: false,
                 isFixed: false,
-                modificationDate: null,
+                modificationDate: null
             } as Note_I];
 
             queryClient.setQueryData(['bruteNotes'], {

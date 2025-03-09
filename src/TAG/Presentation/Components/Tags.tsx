@@ -4,6 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useRef, useState } from "react";
 import { useDetermineTagToNote } from "../Hooks/useDetermineTagToNote";
 import { useIDTagParamContext } from "../Context/idTagParamContext";
+import { useWordSearchContext } from "../../../UI/TOOLBAR/Presentation/Context/WordSearchContext";
 
 interface Props {
     tagListLocal: Tag_I[];
@@ -55,6 +56,7 @@ const Tags: React.FC<Props> = ({
     }, [isSuccessUseDetermineTagToNote])
 
     const { setIDTagParam, setShowListByTag } = useIDTagParamContext();
+    const { setShowLisSearch } = useWordSearchContext();
 
     return (<>
         <div
@@ -96,6 +98,7 @@ const Tags: React.FC<Props> = ({
                             onClick={() => {
                                 setIDTagParam(id)
                                 setShowListByTag(true)
+                                setShowLisSearch(false)
                             }}
 
                             style={{

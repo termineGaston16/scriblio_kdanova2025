@@ -1,42 +1,59 @@
-import { useEffect, useState } from "react";
-import { IoSettingsOutline } from "react-icons/io5";
+import { useEffect, useState } from "react"
+import { defineTitleToolbar } from "../../Application/toolbarApp"
 import { useLocation } from "react-router-dom"
+import { CiSearch, CiSettings } from "react-icons/ci";
+import { useWordSearchContext } from "../Context/WordSearchContext";
 
 export default function Toolbar() {
 
     const location = useLocation();
-    const formatTitle = (path: string) => {
-        if (typeof path !== 'string' || path === "/") return "tus notas";
-        return path
-            .replace("/", "")
-            .replace(/^./, char => char.toUpperCase())
-    };
+    const [titleToolbar, setTitleToolbar] = useState<string>(
+        defineTitleToolbar(location.pathname))
+    const [showSettings, setShowSettings] = useState<boolean>(false);
 
-    const [titleToolbar, setTitleToolbar] = useState<string>(() => formatTitle(location.pathname));
-    const [showSettings, setShowSettings] = useState<boolean>(false)
+    const { setWordSearch, setShowLisSearch } = useWordSearchContext();
 
     useEffect(() => {
-        setTitleToolbar(formatTitle(location.pathname));
-    }, [location.pathname]);
+        setTitleToolbar(defineTitleToolbar(location.pathname));
+    }, [location.pathname])
 
-    return (
+    const handleSubmitWordSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const wordKey = new FormData(e.currentTarget).get('wordSearch') as string;
+        if (wordKey.length <= 0) return;
+        setWordSearch(wordKey);
+    };
+
+    return (<>
         <div role="toolbar">
             <h2>{titleToolbar}</h2>
+
             <a href="" target="_blank" rel="noopener noreferrer">
-                KDA/NOVA 2025
+                © KDA/NOVA 2025
             </a>
 
-            <label htmlFor="">Buscar</label>
-            <input type="search" name="" id="" />
+            <form
+                onSubmit={(e) => handleSubmitWordSearch(e)}
+                method="get">
+                <input
+                    onClick={() => setShowLisSearch(true)}
 
-            <button
-                type="button"
-                onClick={() => setShowSettings(true)}
-            >
-                <IoSettingsOutline />
-            </button>
+                    type="search"
+                    name="wordSearch"
+                    id="wordSearch"
+                    maxLength={60}
+                    minLength={1}
+                />
+                <button type="submit"><CiSearch /></button>
+            </form>
 
-
+            <button type="button"><CiSettings /></button>
         </div>
-    )
-}
+
+        {/* {
+            showSettings &&
+            <section></section>
+        } */}
+    </>)
+};
