@@ -12,7 +12,7 @@ const GeneralSettings: React.FC<Props> = ({ setShowSettings }) => {
     const [darkMode, setDarkMode] = useState<boolean>(false);
     const [language, setLanguage] = useState<string>('ES_lang');
     const [fontStyle, setFontStyle] = useState<string>("serif");
-    const [fontSize, setFontSize] = useState<string>(2);
+    const [fontSize, setFontSize] = useState<number>(2);
 
 
     return (
@@ -76,7 +76,7 @@ const GeneralSettings: React.FC<Props> = ({ setShowSettings }) => {
                 max={200}
                 type="range"
                 value={fontSize}
-                onChange={(e) => setFontSize(e.target.value)}
+                onChange={(e) => setFontSize(parseInt(e.target.value))}
             />
             <span>{fontSize}</span>
 
