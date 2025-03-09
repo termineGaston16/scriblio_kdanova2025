@@ -31,7 +31,9 @@ export default function App() {
                     <BrowserRouter>
 
                         <WordSearchProvider>
-                            <IDTagParamProvider>
+                            <Toolbar />
+
+                            {/* <IDTagParamProvider>
                                 <Header />
                                 <Toolbar />
 
@@ -42,7 +44,7 @@ export default function App() {
                                         <Route key={path} path={path} element={<SectionPreviousNoteList />} />
                                     ))}
                                 </Routes>
-                            </IDTagParamProvider>
+                            </IDTagParamProvider> */}
                         </WordSearchProvider>
 
                     </BrowserRouter>

@@ -3,6 +3,7 @@ import { defineTitleToolbar } from "../../Application/toolbarApp"
 import { useLocation } from "react-router-dom"
 import { CiSearch, CiSettings } from "react-icons/ci";
 import { useWordSearchContext } from "../Context/WordSearchContext";
+import GeneralSettings from "../../SETTINGS/Presentation/Components/GeneralSettings";
 
 export default function Toolbar() {
 
@@ -48,12 +49,16 @@ export default function Toolbar() {
                 <button type="submit"><CiSearch /></button>
             </form>
 
-            <button type="button"><CiSettings /></button>
+            <button
+                onClick={() => setShowSettings(true)}
+                type="button"><CiSettings /></button>
         </div>
 
-        {/* {
+        {
             showSettings &&
-            <section></section>
-        } */}
+            <GeneralSettings
+                setShowSettings={() => setShowSettings(false)}
+            />
+        }
     </>)
 };
