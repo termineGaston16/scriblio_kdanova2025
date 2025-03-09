@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
 import { Tag_I } from "../../Domain/tag";
 import { FiMinusCircle } from "react-icons/fi";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useEffect, useRef, useState } from "react";
 import { useDetermineTagToNote } from "../Hooks/useDetermineTagToNote";
+import { useIDTagParamContext } from "../Context/idTagParamContext";
 
 interface Props {
     tagListLocal: Tag_I[];
@@ -16,7 +16,7 @@ interface Props {
         id: string;
         name: string;
     } | null>>;
-    setShowTagDeleteWarning: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowTagDeleteWarning: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
@@ -54,6 +54,8 @@ const Tags: React.FC<Props> = ({
         setAlertAsingTagInNote(true)
     }, [isSuccessUseDetermineTagToNote])
 
+    const { setIDTagParam, setShowListByTag } = useIDTagParamContext();
+
     return (<>
         <div
             ref={parentRef}
@@ -85,13 +87,16 @@ const Tags: React.FC<Props> = ({
                                 id: id,
                                 name: title
                             })}
-                            onMouseLeave={() => setShowOptionsTag(null)}
 
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => handleUseDetermineTagToNote(e, id)}
                             onDragStart={(e) => e.preventDefault()}
                             draggable={false}
 
+                            onClick={() => {
+                                setIDTagParam(id)
+                                setShowListByTag(true)
+                            }}
 
                             style={{
                                 position: "absolute", // 📌 Posiciona los elementos correctamente
@@ -101,17 +106,15 @@ const Tags: React.FC<Props> = ({
                                 transform: `translateY(${virtualRow.start}px)`, // 📌 Mueve cada elemento a su posición correcta
                             }}
                         >
-                            <Link to={"/"}>
-                                <span
-                                    style={{
-                                        border: "1px solid red",
-                                        display: "block",
-                                        padding: "10px",
-                                    }}
-                                >
-                                    {title}
-                                </span>
-                            </Link>
+                            <span
+                                style={{
+                                    border: "1px solid red",
+                                    display: "block",
+                                    padding: "10px",
+                                }}
+                            >
+                                {title}
+                            </span>
 
                             {showOptionsTag?.id === id && (
                                 <button

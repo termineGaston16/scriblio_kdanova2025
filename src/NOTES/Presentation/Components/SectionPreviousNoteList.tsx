@@ -10,6 +10,8 @@ import { Note_I } from "../../Domain/note";
 import { useGetBruteNotes } from "../Hooks/useGetBruteNotes";
 import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { useGetFiltredByClassNotes } from "../Hooks/useGetFiltredByClassNotes";
+import { useFilterNotesByTag } from "../../../TAG/Presentation/Hooks/useFilterNotesByTag";
+import { useIDTagParamContext } from "../../../TAG/Presentation/Context/idTagParamContext";
 
 export default function SectionPreviousNoteList() {
 
@@ -22,8 +24,14 @@ export default function SectionPreviousNoteList() {
     const [localBruteNotesList, setLocalBruteNotesList] = useState<Note_I[]>(() => {
         return queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes'])?.pages.flat() ?? []
     });
+
     const [localFilteredNotesList, setLocalFilteredNotesList] = useState<Note_I[]>(() => {
         return queryClient.getQueryData<InfiniteData<Note_I[]>>(['filtredNotes', validateLocationToFiltred(location.pathname)])?.pages.flat() ?? []
+    });
+
+    const { idTagParam, showListByTag } = useIDTagParamContext();
+    const [localNotesByTag, setLocalNotesByTag] = useState<Note_I[]>(() => {
+        return queryClient.getQueryData<InfiniteData<Note_I[]>>(['notesByTag', idTagParam])?.pages.flat() ?? []
     });
 
     const {
@@ -32,6 +40,7 @@ export default function SectionPreviousNoteList() {
         hasNextPage: hasNextPageBruteNotes,
         isLoading: isLoadingBrutesNotes,
         isError: isErrorBrutesNotes,
+        isFetching: isFetchingBrutesNotes
     } = useGetBruteNotes(currentLinkValue);
 
     const {
@@ -40,21 +49,47 @@ export default function SectionPreviousNoteList() {
         hasNextPage: hasNextPageFiltredNotes,
         isLoading: isLoadingFiltredNotes,
         isError: isErrorFiltredNotes,
+        isFetching: isFetchingFiltredNotes
     } = useGetFiltredByClassNotes(currentLinkValue as ClassNotes_E);
+
+    const {
+        data: dataNotesByTag,
+        fetchNextPage: fetchNextPageNotesByTag,
+        hasNextPage: hasNextPageNotesByTag,
+        isLoading: isLoadingNotesByTag,
+        isError: isErrorNotesByTag,
+        isFetching: isFetchingNotesByTag
+    } = useFilterNotesByTag(idTagParam);
 
     useEffect(() => {
         setCurrentLinkValue(validateLocationToFiltred(location.pathname))
+
+        setLocalNotesByTag([])
     }, [location.pathname])
 
     useEffect(() => {
         if (!bruteNotes || bruteNotes.pages.length === 0) return;
         setLocalBruteNotesList(bruteNotes.pages.flat());
+
+        setLocalFilteredNotesList([])
+        setLocalNotesByTag([]);
     }, [bruteNotes?.pages]);
 
     useEffect(() => {
         if (!filtredNotes || filtredNotes.pages.length === 0) return;
         setLocalFilteredNotesList(filtredNotes.pages.flat());
+
+        setLocalBruteNotesList([]);
+        setLocalNotesByTag([]);
     }, [filtredNotes?.pages]);
+
+    useEffect(() => {
+        if (!dataNotesByTag || dataNotesByTag.pages.length <= 0) return;
+        setLocalNotesByTag(dataNotesByTag.pages.flat());
+
+        setLocalBruteNotesList([]);
+        setLocalFilteredNotesList([])
+    }, [dataNotesByTag?.pages])
 
     const observerRef = useRef<IntersectionObserver | null>(null);
     const lastNote = useCallback((node: HTMLElement | null) => {
@@ -63,9 +98,11 @@ export default function SectionPreviousNoteList() {
 
         observerRef.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting) {
+
                 if (currentLinkValue.length <= 0 && hasNextPageBruteNotes) fetchNextPageBruteNotes();
                 if (Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
                     && hasNextPageFiltredNotes) fetchNextPageFiltredNotes();
+                if (showListByTag && hasNextPageNotesByTag) fetchNextPageNotesByTag();
             }
         }, {
             root: null,
@@ -74,7 +111,7 @@ export default function SectionPreviousNoteList() {
         })
 
         if (node) observerRef.current.observe(node);
-    }, [hasNextPageBruteNotes]);
+    }, [hasNextPageBruteNotes, showListByTag, hasNextPageNotesByTag]);
 
     return (<>
         <section style={{ backgroundColor: '#aae1dd' }}>
@@ -86,11 +123,13 @@ export default function SectionPreviousNoteList() {
 
             <NotePreviewList
                 listNoteLocal={
-                    currentLinkValue.length <= 0
-                        ? localBruteNotesList
-                        : Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
-                            ? localFilteredNotesList
-                            : []
+                    showListByTag ? localNotesByTag :
+
+                        currentLinkValue.length <= 0
+                            ? localBruteNotesList
+                            : Object.values(ClassNotes_E).includes(currentLinkValue as ClassNotes_E)
+                                ? localFilteredNotesList
+                                : []
                 }
                 lastNote={lastNote}
             />
@@ -107,8 +146,15 @@ export default function SectionPreviousNoteList() {
 
         {
             <AsynchronousResponse
-                isLoading={isLoadingBrutesNotes || isLoadingFiltredNotes}
-                isError={isErrorBrutesNotes || isErrorFiltredNotes}
+                isLoading={
+                    isLoadingBrutesNotes
+                    || isLoadingFiltredNotes
+                    || isFetchingBrutesNotes
+                    || isFetchingFiltredNotes
+                    || isLoadingNotesByTag
+                    || isFetchingNotesByTag
+                }
+                isError={isErrorBrutesNotes || isErrorFiltredNotes || isErrorNotesByTag}
                 loadingComponent={
                     <span
                         style={{

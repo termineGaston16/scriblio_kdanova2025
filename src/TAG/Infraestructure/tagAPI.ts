@@ -1,7 +1,8 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, where } from "firebase/firestore";
 import { Tag_I } from "../Domain/tag";
 import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { DataBaseError, DataBaseSystemFailure } from "./tagError";
+import { Note_I } from "../../NOTES/Domain/note";
 
 export const LIMIT_TAGS = 2;
 export const MAX_TAGS = 50;
@@ -86,3 +87,54 @@ export const removeTag = async (id: string): Promise<void | true> => {
     }
 }
 
+{/* method: GET */ }
+export const getIDsByTag = async (idTag: string): Promise<string[]> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        const docRef = doc(db, "TAGS", idTag);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) return [];
+
+        return (docSnap.data() as Tag_I).notesInThisTag ?? [];
+
+    } catch (error) {
+
+        if (error instanceof DataBaseError) throw error;
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}
+
+{/* method: GET */ }
+export const filterNotesByTag = async (idTag: string, lastID: string | null): Promise<Note_I[]> => {
+    try {
+        if (!db) throw new Error("The database is not initialized.");
+
+        const idsNotes = await getIDsByTag(idTag);
+        if (idsNotes.length === 0) return [];
+
+        const notesRef = collection(db, "NOTES");
+        let q;
+
+        if (lastID) {
+            const lastDocRef = doc(db, "NOTES", lastID);
+            const lastDocSnap = await getDoc(lastDocRef);
+
+            if (!lastDocSnap.exists()) {
+                return [];
+            }
+
+            q = query(notesRef, where("id", "in", idsNotes), orderBy("id"), startAfter(lastDocSnap), limit(LIMIT_TAGS));
+        } else {
+            q = query(notesRef, where("id", "in", idsNotes), orderBy("id"), limit(LIMIT_TAGS));
+        }
+
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Note_I[];
+
+    } catch (error) {
+        console.error("Error filtering notes: ", error);
+        throw new Error(`Firestore query failed: ${error}`);
+    }
+};

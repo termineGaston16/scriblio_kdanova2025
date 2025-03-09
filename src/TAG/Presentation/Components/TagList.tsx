@@ -12,6 +12,7 @@ import { useGetTags } from "../Hooks/useGetTags";
 import { useRemoveTag } from "../Hooks/useRemoveTag";
 
 
+
 export default function TagList() {
 
     const [showInfoCreateTag, setShowInfoCreateTag] = useState<boolean>(false);
@@ -41,12 +42,10 @@ export default function TagList() {
         mutate: mutateUseRemoveTag
     } = useRemoveTag();
 
+
     useEffect(() => {
         if (!dataTagList || dataTagList.pages.length <= 0) return;
-
         setTagListLocal(dataTagList.pages.flat());
-
-        console.log(dataTagList.pages);
     }, [dataTagList?.pages])
 
     const observerRef = useRef<IntersectionObserver | null>(null);

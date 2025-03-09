@@ -10,6 +10,7 @@ import { useDetermineClassToNote } from "../../../../../../NOTES/Presentation/Ho
 import { validateLocationToFiltred } from "../../../../../../NOTES/Application/noteAPP";
 import { useDeleteNote } from "../../../../../../NOTES/Presentation/Hooks/useDeleteNote";
 import { ClassNotes_E } from "../../../../../../NOTES/Domain/classNotes";
+import { useIDTagParamContext } from "../../../../../../TAG/Presentation/Context/idTagParamContext";
 
 export default function Navbar() {
 
@@ -46,6 +47,8 @@ export default function Navbar() {
         if (typeof dataUseDetermineClassToNote === 'string') setShowAlertError(true);
     }, [isSuccessUseDetermineClassToNote])
 
+    const { setShowListByTag } = useIDTagParamContext();
+
     return (<>
         <nav>
             <BsFillInfoCircleFill
@@ -65,6 +68,7 @@ export default function Navbar() {
                 flexDirection: 'column'
             }}>
                 <li
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -81,6 +85,7 @@ export default function Navbar() {
                     onDragStart={(e) => e.preventDefault()}
                     draggable={false}
 
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -96,6 +101,8 @@ export default function Navbar() {
                     onDrop={(e) => handleDropNavbar(e, '/pendientes')}
                     onDragStart={(e) => e.preventDefault()}
                     draggable={false}
+
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -110,6 +117,8 @@ export default function Navbar() {
                     onDrop={(e) => handleDropNavbar(e, '/completadas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
+
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -124,6 +133,8 @@ export default function Navbar() {
                     onDrop={(e) => handleDropNavbar(e, '/fijas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
+
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -138,6 +149,8 @@ export default function Navbar() {
                     onDrop={(e) => handleDropNavbar(e, '/archivadas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
+
+                    onClick={() => setShowListByTag(false)}
                     style={{
                         border: '1px solid aqua',
                         height: '30px'
@@ -152,6 +165,7 @@ export default function Navbar() {
                     onDrop={(e) => handleDropNavbar(e, 'deleteNote')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
+
                     style={{
                         border: '1px solid aqua',
                         height: '30px'

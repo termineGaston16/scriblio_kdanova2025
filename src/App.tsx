@@ -5,7 +5,7 @@ import { store } from "./UI/Application/Redux/store/storeRedux";
 import SectionPreviousNoteList from "./NOTES/Presentation/Components/SectionPreviousNoteList";
 import Header from "./UI/Presentation/Components/HEADER/Presentation/Components/Header";
 import React from "react";
-import TagList from "./TAG/Presentation/Components/TagList";
+import { IDTagParamProvider } from "./TAG/Presentation/Context/idTagParamContext";
 
 
 export default function App() {
@@ -27,17 +27,17 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        {/* <TagList /> */}
+                        <IDTagParamProvider>
+                            <Header />
 
-                        <Header />
+                            <Routes>
+                                <Route path="*" element={'Page Not Found'} />
 
-                        <Routes>
-                            <Route path="*" element={'Page Not Found'} />
-
-                            {parametersToFilterNotes.map((path) => (
-                                <Route key={path} path={path} element={<SectionPreviousNoteList />} />
-                            ))}
-                        </Routes>
+                                {parametersToFilterNotes.map((path) => (
+                                    <Route key={path} path={path} element={<SectionPreviousNoteList />} />
+                                ))}
+                            </Routes>
+                        </IDTagParamProvider>
 
                     </BrowserRouter>
                 </QueryClientProvider>
@@ -45,3 +45,5 @@ export default function App() {
         </React.StrictMode >
     )
 }
+
+// IDTagParamProvider: Header, SectionPreviousNoteList
