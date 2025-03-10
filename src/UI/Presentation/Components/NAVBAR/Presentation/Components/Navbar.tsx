@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { MdOutlineNotes } from "react-icons/md";
+import { MdOutlineEventNote, MdOutlineNotes } from "react-icons/md";
 import { IoIosStarOutline } from "react-icons/io";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { TiDeleteOutline, TiPinOutline } from "react-icons/ti";
@@ -12,6 +12,8 @@ import { useDeleteNote } from "../../../../../../NOTES/Presentation/Hooks/useDel
 import { ClassNotes_E } from "../../../../../../NOTES/Domain/classNotes";
 import { useIDTagParamContext } from "../../../../../../TAG/Presentation/Context/idTagParamContext";
 import { useWordSearchContext } from "../../../../../TOOLBAR/Presentation/Context/WordSearchContext";
+
+import '../Styles/navbar.css'
 
 export default function Navbar() {
 
@@ -52,38 +54,44 @@ export default function Navbar() {
     const { setShowLisSearch } = useWordSearchContext();
 
     return (<>
-        <nav>
+        <nav className="Navbar">
             <BsFillInfoCircleFill
+                className="Navbar__infoICON"
                 onMouseOver={() => setShowInfoNavbar(true)}
                 onMouseOut={() => setShowInfoNavbar(false)}
+
+                onTouchStart={() => setShowInfoNavbar(true)}
+                onTouchEnd={() => setShowInfoNavbar(false)}
             />
 
             {showInfoNavbar &&
-                <p>
-                    arrastre el título de una nota para poder asignarle una clase
-                </p>
+                <aside className="Navbar__infoNote">
+                    (i) Arrastre una Nota (<MdOutlineEventNote className="Navbar__infoNote__ReactICON" />) para asignarle una clase.
+                </aside>
             }
 
-            <ul style={{
-                display: 'flex',
-                gap: '10px',
-                flexDirection: 'column'
-            }}>
+            <ul className="Navbar__listClass">
                 <li
+                    className="Navbar__listClass__class"
+
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
-                    <Link to={'/'}>
-                        <span>todas las listas</span>
-                        <MdOutlineNotes />
+                    <Link
+                        className="Navbar__listClass__class__Link"
+                        to={'/'}>
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >todas las listas</span>
+                        <MdOutlineNotes
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/favoritos')}
 
@@ -93,18 +101,21 @@ export default function Navbar() {
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
                     <Link
+                        className="Navbar__listClass__class__Link"
                         to={'/favoritos'}>
-                        <span>favoritos</span>
-                        <IoIosStarOutline />
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >favoritos</span>
+                        <IoIosStarOutline
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/pendientes')}
                     onDragStart={(e) => e.preventDefault()}
@@ -113,17 +124,21 @@ export default function Navbar() {
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
-                    <Link to={'/pendientes'}>
-                        <span>pendientes</span>
-                        <FaCheck />
+                    <Link
+                        className="Navbar__listClass__class__Link"
+                        to={'/pendientes'}>
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >pendientes</span>
+                        <FaCheck
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/completadas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
@@ -132,17 +147,21 @@ export default function Navbar() {
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
-                    <Link to={'/completadas'}>
-                        <span>completadas</span>
-                        <FaCheckDouble />
+                    <Link
+                        className="Navbar__listClass__class__Link"
+                        to={'/completadas'}>
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >completadas</span>
+                        <FaCheckDouble
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/fijas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
@@ -151,17 +170,21 @@ export default function Navbar() {
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
-                    <Link to={'/fijas'}>
-                        <span>fijas</span>
-                        <TiPinOutline />
+                    <Link
+                        className="Navbar__listClass__class__Link"
+                        to={'/fijas'}>
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >fijas</span>
+                        <TiPinOutline
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, '/archivadas')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
@@ -170,38 +193,43 @@ export default function Navbar() {
                     onClick={() => {
                         setShowListByTag(false)
                         setShowLisSearch(false)
-                    }}
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
                     }}>
-                    <Link to={'/archivadas'}>
-                        <span>archivadas</span>
-                        <IoArchiveOutline />
+                    <Link
+                        className="Navbar__listClass__class__Link"
+                        to={'/archivadas'}>
+                        <span
+                            className="Navbar__listClass__class__Link__text"
+                        >archivadas</span>
+                        <IoArchiveOutline
+                            className="Navbar__listClass__class__Link__ReactICON"
+                        />
                     </Link>
                 </li>
                 <li
+                    className="Navbar__listClass__class"
+
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, 'deleteNote')}
                     onDragStart={(e) => e.preventDefault()} // Cancela cualquier intento de arrastrar
                     draggable={false}
+                >
 
-                    style={{
-                        border: '1px solid aqua',
-                        height: '30px'
-                    }}>
-
-                    <span>borrar nota</span>
-                    <TiDeleteOutline />
+                    <span
+                        className="Navbar__listClass__class__Link__text"
+                    >borrar nota</span>
+                    <TiDeleteOutline
+                        className="Navbar__listClass__class__Link__ReactICON"
+                    />
                 </li>
             </ul>
         </nav>
 
         {
             showAlertError &&
-            <div>
-                {dataUseDetermineClassToNote}
+            <div className="Navbar__alertError">
+                <p className="Navbar__alertError__message">{dataUseDetermineClassToNote}</p>
                 <button
+                    className="Navbar__alertError__btnOk"
                     onClick={() => setShowAlertError(false)}
                     type="button">
                     Okey

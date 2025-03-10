@@ -1,0 +1,56 @@
+.Header {
+    width: 25vw;
+    min-width: 106px;
+
+    height: 100vh;
+
+    background-color: rgb(233, 238, 254);
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+}
+
+.Header__Link {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10%;
+
+    padding: 5%;
+    text-decoration: none;
+
+
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(0, 13, 255),
+            rgb(208, 0, 255),
+            rgb(255, 0, 30));
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.Header__Link__title {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: clamp(15px, 3vw, 3vw);
+
+    font-weight: 600;
+    font-style: italic;
+    letter-spacing: .5vw;
+}
+
+.Header__Link__logo {
+    aspect-ratio: 1/1;
+    width: 15%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}

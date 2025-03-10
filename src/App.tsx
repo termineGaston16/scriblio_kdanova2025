@@ -34,7 +34,7 @@ export default function App() {
                         <WordSearchProvider>
                             <IDTagParamProvider>
                                 <Header />
-                                <Toolbar />
+                                {/* <Toolbar />
 
                                 <Routes>
                                     <Route path="*" element={'Page Not Found'} />
@@ -43,7 +43,7 @@ export default function App() {
                                         <Route key={path} path={path} element={<SectionPreviousNoteList />} />
                                     ))}
                                     <Route path={"nota=id/:IDNote_url"} element={<NoteContainer />} />
-                                </Routes>
+                                </Routes> */}
                             </IDTagParamProvider>
                         </WordSearchProvider>
 
