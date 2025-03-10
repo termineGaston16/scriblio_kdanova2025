@@ -6,14 +6,16 @@ interface Props {
     idNoteLocal: string | null,
     bodyLocal: string,
     setBodyLocal: React.Dispatch<React.SetStateAction<string>>,
-    setBodyFromCall: React.Dispatch<React.SetStateAction<string>>
+    setBodyFromCall: React.Dispatch<React.SetStateAction<string>>,
+    setBodyNoteLocal: React.Dispatch<React.SetStateAction<string | null>>
 };
 
 const NoteContent: React.FC<Props> = ({
     idNoteLocal,
     bodyLocal,
     setBodyLocal,
-    setBodyFromCall
+    setBodyFromCall,
+    setBodyNoteLocal
 }) => {
 
     const {
@@ -27,6 +29,7 @@ const NoteContent: React.FC<Props> = ({
         if (!dataBodyNote) return;
         setBodyLocal(dataBodyNote.body)
         setBodyFromCall(dataBodyNote.body)
+        setBodyNoteLocal(dataBodyNote.id)
     }, [dataBodyNote])
 
     return (<>

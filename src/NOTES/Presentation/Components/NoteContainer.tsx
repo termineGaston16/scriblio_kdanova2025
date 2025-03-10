@@ -6,6 +6,7 @@ import NoteActions from "./NoteActions";
 export default function NoteContainer() {
 
     const [idNoteLocal, setIDNoteLocal] = useState<string | null>(null);
+    const [idBodyNoteLocal, setBodyNoteLocal] = useState<string | null>(null)
 
     const [bodyLocal, setBodyLocal] = useState<string>('');
     const [bodyFromCall, setBodyFromCall] = useState<string>('');
@@ -33,6 +34,7 @@ export default function NoteContainer() {
                 bodyLocal={bodyLocal}
                 setBodyLocal={setBodyLocal}
                 setBodyFromCall={setBodyFromCall}
+                setBodyNoteLocal={setBodyNoteLocal}
             />
             <hr />
             <NoteActions
@@ -40,6 +42,7 @@ export default function NoteContainer() {
                 bodyLocal={bodyLocal}
                 logosFromNoteLocal={logosFromNoteLocal}
                 idNoteLocal={idNoteLocal}
+                idBodyNoteLocal={idBodyNoteLocal}
             />
         </section>
     )

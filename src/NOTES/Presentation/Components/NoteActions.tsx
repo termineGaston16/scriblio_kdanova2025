@@ -5,8 +5,10 @@ import { FaCheck, FaCheckDouble, FaStar } from "react-icons/fa";
 import { PiPushPin } from "react-icons/pi";
 import { useDetermineClassToNote } from "../Hooks/useDetermineClassToNote";
 import { ClassNotes_E } from "../../Domain/classNotes";
+import { useUpdateBody } from "../../NOTES-BODY/Presentation/Hooks/useUpdateBody";
 
 interface Props {
+    idBodyNoteLocal: string | null,
     idNoteLocal: string | null,
     bodyFromCall: string,
     bodyLocal: string,
@@ -24,7 +26,8 @@ const NoteActions: React.FC<Props> = ({
     idNoteLocal,
     bodyFromCall,
     bodyLocal,
-    logosFromNoteLocal
+    logosFromNoteLocal,
+    idBodyNoteLocal
 }) => {
 
     const [bodyChanged, setBodyChanged] = useState<boolean>(false);
@@ -33,20 +36,32 @@ const NoteActions: React.FC<Props> = ({
     }, [bodyLocal, bodyFromCall])
 
     const {
-        mutate: mutateDetermineClass,
-        isSuccess: isSuccessDetermineClass
+        mutate: mutateDetermineClass
     } = useDetermineClassToNote()
 
+    const {
+        mutate: mutateUpdateBody
+    } = useUpdateBody()
 
     return (
         <div>
             <form method="post">
+                <button
+                    style={{
+                        opacity: bodyChanged ? .5 : 1
+                    }}
+
+                    onClick={
+                        () => mutateUpdateBody({
+                            id: idBodyNoteLocal,
+                            bodyLocal: bodyFromCall,
+                            newBody: bodyLocal,
+                            idNoteLocal: idNoteLocal
+                        })
+                    }
+                    type="button">Guardar Cambios</button>
                 {
-                    bodyChanged &&
-                    <>
-                        <button type="submit">Guardar Cambios</button>
-                        <span>*Los cambios no se han guardado</span>
-                    </>
+                    !bodyChanged && <span>*Los cambios no se han guardado</span>
                 }
             </form>
 

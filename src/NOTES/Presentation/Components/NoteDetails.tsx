@@ -113,13 +113,6 @@ const NoteDetails: React.FC<Props> = ({ idNoteLocal, setIDNoteLocal, setLogosFro
 
                 <span>Fecha de creación:</span>
                 <span>{dataNoteLocal.creationDate}</span>
-
-                <span>Última vez editado:</span>
-                <span>
-                    {
-                        dataNoteLocal.modificationDate ? dataNoteLocal.modificationDate : dataNoteLocal.creationDate
-                    }
-                </span>
             </div>
         }
 

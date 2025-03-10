@@ -1,4 +1,4 @@
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { DataBaseError, DataBaseSystemFailure } from "../../../TAG/Infraestructure/tagError";
 import { db } from "../../../UI/Infraestructure/Firebase/firebase";
 import { Note_Body_I } from "../Domain/note_body";
@@ -7,11 +7,12 @@ import { Note_Body_I } from "../Domain/note_body";
 export const createNoteBody = async (idNote: string): Promise<void> => {
     try {
         if (!db) throw new DataBaseError("The database is not initialized.");
+        const idBody = crypto.randomUUID();
 
-        const noteRef = doc(collection(db, "NOTES-BODIES"), idNote);
+        const noteRef = doc(collection(db, "NOTES-BODIES"), idBody);
         await setDoc(noteRef, {
             body: '',
-            id: crypto.randomUUID(),
+            id: idBody,
             idNote: idNote
         } as Note_Body_I);
     } catch (error) {
@@ -40,3 +41,16 @@ export const getBodyNoteByID = async (idNote: string): Promise<Note_Body_I | nul
         throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
     }
 };
+
+{/* method: PATCH */ }
+export const updateBody = async (id: string, newBody: string): Promise<void> => {
+    try {
+        if (!db) throw new DataBaseError("The database is not initialized.");
+
+        const noteRef = doc(db, "NOTES-BODIES", id);
+        await updateDoc(noteRef, { "body": newBody });
+    } catch (error) {
+        if (error instanceof DataBaseError) throw error;
+        throw new DataBaseSystemFailure(`Firestore query failed: ${error}`);
+    }
+}

@@ -22,13 +22,16 @@ export const useDetermineClassToNote = () => {
         ),
         onMutate: async (props: Props) => {
 
+            const { id, classStyle, value } = props;
             await queryClient.cancelQueries({ queryKey: ['bruteNotes'] });
+            await queryClient.cancelQueries({ queryKey: ['note', id] });
 
             const brutesNotesCache = queryClient.getQueryData<InfiniteData<Note_I[]>>(['bruteNotes']);
-            if (!brutesNotesCache) return;
+            const bruteNoteCache = queryClient.getQueryData<Note_I>(['note', id]);
+            if (!brutesNotesCache || !bruteNoteCache) return;
 
             const pagesFiltred = brutesNotesCache.pages.flat();
-            const { id, classStyle, value } = props;
+
 
             const index = pagesFiltred.findIndex(note => note.id === id);
             if (index < 0) return;
@@ -36,17 +39,25 @@ export const useDetermineClassToNote = () => {
             const newPages = [...pagesFiltred];
             newPages[index][classStyle] = value;
 
+            const newNote = {
+                ...bruteNoteCache,
+                [classStyle]: value
+            }
+
             queryClient.setQueryData(['bruteNotes'], {
                 ...brutesNotesCache,
                 pages: newPages,
             });
+            queryClient.setQueryData(['note', id], newNote);
         },
-        onError: () => {
+        onError: (_, __) => {
             queryClient.resetQueries({ queryKey: ['bruteNotes'] });
+            queryClient.resetQueries({ queryKey: ['note', __.id] });
             toast(<div>La clase no pudo ser modificada</div>);
         },
-        onSuccess: (response) => {
+        onSuccess: (response, _) => {
             queryClient.invalidateQueries({ queryKey: ['bruteNotes'] });
+            queryClient.invalidateQueries({ queryKey: ['note', _.id] });
 
             if (typeof response === 'boolean' && response) {
                 toast(`clase asignada correctamente`)
