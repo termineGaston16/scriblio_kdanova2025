@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { getBodyNoteByID } from "../../Infraestructure/note_bodyAPI";
 
-export const useGetBodyNoteByID = (idNote: string) => {
+export const useGetBodyNoteByID = (idNote: string | null) => {
     return useQuery({
         queryKey: ['noteBody', idNote],
         queryFn: () => {

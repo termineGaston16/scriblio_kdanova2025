@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useGetNoteByID } from "../Hooks/useGetNoteByID";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
 import { useGetTagsFromNote } from "../Hooks/useGetTagsFromNote";
 
-export default function NoteDetails() {
+
+interface Props {
+    idNoteLocal: string | null,
+    setIDNoteLocal: React.Dispatch<React.SetStateAction<string | null>>
+}
+
+const NoteDetails: React.FC<Props> = ({ idNoteLocal, setIDNoteLocal }) => {
 
     const { IDNote_url } = useParams();
-    const [idNoteLocal, setIDNoteLocal] = useState<string | null>(null)
 
     useEffect(() => {
         if (!IDNote_url) return;
@@ -89,3 +94,5 @@ export default function NoteDetails() {
             && <span>No se encontró la nota</span>}
     </>)
 }
+
+export default NoteDetails;
