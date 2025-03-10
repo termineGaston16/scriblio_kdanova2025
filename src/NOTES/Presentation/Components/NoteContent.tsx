@@ -5,13 +5,15 @@ import { useGetBodyNoteByID } from "../../NOTES-BODY/Presentation/Hooks/useGetBo
 interface Props {
     idNoteLocal: string | null,
     bodyLocal: string,
-    setBodyLocal: React.Dispatch<React.SetStateAction<string>>
+    setBodyLocal: React.Dispatch<React.SetStateAction<string>>,
+    setBodyFromCall: React.Dispatch<React.SetStateAction<string>>
 };
 
 const NoteContent: React.FC<Props> = ({
     idNoteLocal,
     bodyLocal,
-    setBodyLocal
+    setBodyLocal,
+    setBodyFromCall
 }) => {
 
     const {
@@ -24,6 +26,7 @@ const NoteContent: React.FC<Props> = ({
     useEffect(() => {
         if (!dataBodyNote) return;
         setBodyLocal(dataBodyNote.body)
+        setBodyFromCall(dataBodyNote.body)
     }, [dataBodyNote])
 
     return (<>

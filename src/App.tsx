@@ -31,7 +31,7 @@ export default function App() {
                 <QueryClientProvider client={query}>
                     <BrowserRouter>
 
-                        {/* <WordSearchProvider>
+                        <WordSearchProvider>
                             <IDTagParamProvider>
                                 <Header />
                                 <Toolbar />
@@ -45,7 +45,7 @@ export default function App() {
                                     <Route path={"nota=id/:IDNote_url"} element={<NoteContainer />} />
                                 </Routes>
                             </IDTagParamProvider>
-                        </WordSearchProvider> */}
+                        </WordSearchProvider>
 
                     </BrowserRouter>
                 </QueryClientProvider>

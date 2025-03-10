@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { useGetNoteByID } from "../Hooks/useGetNoteByID";
 import AsynchronousResponse from "../../../UI/ASYNCHRONOUS RESPONSE/Presentation/Components/AsynchronousResponse";
@@ -7,10 +7,18 @@ import { useGetTagsFromNote } from "../Hooks/useGetTagsFromNote";
 
 interface Props {
     idNoteLocal: string | null,
-    setIDNoteLocal: React.Dispatch<React.SetStateAction<string | null>>
+    setIDNoteLocal: React.Dispatch<React.SetStateAction<string | null>>,
+    setLogosFromNoteLocal: React.Dispatch<React.SetStateAction<{
+        modificationDate: null | string;
+        isFav: boolean;
+        isNotCompleted: boolean;
+        isCompleted: boolean;
+        isFixed: boolean;
+        isArchived: boolean;
+    } | null>>
 }
 
-const NoteDetails: React.FC<Props> = ({ idNoteLocal, setIDNoteLocal }) => {
+const NoteDetails: React.FC<Props> = ({ idNoteLocal, setIDNoteLocal, setLogosFromNoteLocal }) => {
 
     const { IDNote_url } = useParams();
 
@@ -32,6 +40,31 @@ const NoteDetails: React.FC<Props> = ({ idNoteLocal, setIDNoteLocal }) => {
         isFetching: isFetchingTagListNames,
         isError: isErrorTagListNames
     } = useGetTagsFromNote(idNoteLocal);
+
+    useEffect(() => {
+        if (!dataNoteLocal) {
+            setLogosFromNoteLocal(null);
+            return
+        };
+
+        const {
+            isArchived,
+            isCompleted,
+            isFav,
+            isFixed,
+            isNotCompleted,
+            modificationDate
+        } = dataNoteLocal;
+
+        setLogosFromNoteLocal({
+            isArchived: isArchived,
+            isCompleted: isCompleted,
+            isFav: isFav,
+            isFixed: isFixed,
+            isNotCompleted: isNotCompleted,
+            modificationDate: modificationDate
+        })
+    }, [dataNoteLocal])
 
     return (<>
 
