@@ -1,0 +1,199 @@
+.Tags_parentRef {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: column;
+    gap: .5vw;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.Tags__listTags {
+    width: 100%;
+    list-style: none;
+}
+
+.Tags__listTags__tag {
+    border: 1px solid rgb(0, 72, 255);
+    border-radius: .5vw;
+
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+
+    gap: 3%;
+    padding: .7vw;
+    cursor: pointer;
+}
+
+.Tags__listTags__tag__title {
+    color: rgb(10, 166, 166);
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 800;
+    font-size: clamp(10px, 1.3vw, 1.3vw);
+}
+
+.Tags__listTags__tag__ReactICON {
+    width: 1.2vw;
+    height: 1.2vw;
+    min-width: 10px;
+    min-height: 10px;
+}
+
+.container_deleteTag {
+    width: 100%;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.Tags__listTags__tag__deleteTag {
+    width: 1.5vw;
+    aspect-ratio: 1/1;
+
+    border: none;
+    background-color: rgba(255, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(10px, 1.2vw, 1.2vw);
+}
+
+.Tags__listTags__tag__deleteTag__ReactICON {
+    color: red;
+    cursor: pointer;
+    transition: .3s ease-in-out;
+}
+
+.Tags__listTags__tag__deleteTag__ReactICON:hover {
+    filter: drop-shadow(0px 0px 2px red);
+}
+
+.Tags_parentRef::-webkit-scrollbar {
+    width: .6vw;
+}
+
+.Tags_parentRef::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #ff0077, #590fb7, rgb(0, 13, 255));
+    border-radius: 10px;
+}
+
+.Tags_parentRef::-webkit-scrollbar-track {
+    background: #e11c1c00;
+    border-radius: 10px;
+}
+
+
+
+
+/* HOVER */
+
+.Tags__listTags__tag:hover {
+    border: 1px solid rgba(255, 255, 255, 0);
+    transform: scale(1.05);
+}
+
+.Tags__listTags__tag:hover .Tags__listTags__tag__title,
+.Tags__listTags__tag:hover .Tags__listTags__tag__ReactICON {
+    color: white !important;
+}
+
+.Tags__listTags__tag::after {
+    content: '';
+    position: absolute;
+
+    background: linear-gradient(56deg, var(--tag-bg-color), white);
+    width: 0%;
+    height: 100%;
+    border-radius: .5vw;
+    z-index: -1;
+
+    transition: .2s ease-in;
+    left: 0;
+    opacity: 0;
+}
+
+.Tags__listTags__tag:hover::after {
+    width: 100%;
+    opacity: 1;
+}
+
+
+
+
+/* DARK MODE */
+.darkMode .Tags__listTags__tag {
+    border: 1px solid var(--tag-bg-color);
+}
+
+
+
+/* alertAsingTagInNote */
+.alertAsingTagInNote_containter {
+    position: fixed;
+
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+
+    z-index: 2;
+
+    background-color: rgba(0, 0, 0, 0.793);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .3vw;
+}
+
+.alertAsingTagInNote_containter::before {
+    content: '';
+    position: absolute;
+    background-color: rgb(15, 15, 15);
+    border-radius: 1vw;
+    border: 1px solid rgb(85, 0, 255);
+
+    width: 40vw;
+    min-width: 300px;
+    aspect-ratio: 16/9;
+    z-index: -1;
+}
+
+
+.alertAsingTagInNote_message {
+    color: white;
+
+    font-size: clamp(14px, 1vw, 1vw);
+    text-shadow: 3px 3px 0px black;
+}
+
+.alertAsingTagInNote_closeAlert {
+    border: 0px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: clamp(14px, 1vw, 1vw);
+    font-weight: 100;
+
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(59, 69, 255),
+            rgb(208, 0, 255),
+            rgb(255, 0, 30));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+
+    margin-top: 2vw;
+}

@@ -11,7 +11,9 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { useGetTags } from "../Hooks/useGetTags";
 import { useRemoveTag } from "../Hooks/useRemoveTag";
 
-
+import '../Styles/taglist.css'
+import { MdOutlineEventNote } from "react-icons/md";
+import { CiShoppingTag } from "react-icons/ci";
 
 export default function TagList() {
 
@@ -64,31 +66,42 @@ export default function TagList() {
 
 
     return (<>
-        <section>
+        <section className="TagList">
 
-            <button type="button">
-                <AiFillPlusCircle
-                    onClick={() => setFormToCreateNewTag(true)}
-                    onMouseEnter={() => setShowInfoCreateTag(true)}
-                    onMouseLeave={() => setShowInfoCreateTag(false)}
+            <div className="TagList__buttonsContainer">
+                <BsFillInfoCircleFill
+                    className="TagList__btnInfoTag"
+                    onMouseEnter={() => setShowInfoTag(true)}
+                    onMouseLeave={() => setShowInfoTag(false)}
+
+                    onTouchStart={() => setShowInfoTag(true)}
+                    onTouchEnd={() => setShowInfoTag(false)}
                 />
-            </button>
+                <button
+                    className="TagList__btnCreateTag"
+                    type="button">
+                    <AiFillPlusCircle
+                        className="TagList__btnCreateTag__ReactICON"
+                        onClick={() => setFormToCreateNewTag(true)}
+                        onMouseEnter={() => setShowInfoCreateTag(true)}
+                        onMouseLeave={() => setShowInfoCreateTag(false)}
 
-            <BsFillInfoCircleFill
-                onMouseEnter={() => setShowInfoTag(true)}
-                onMouseLeave={() => setShowInfoTag(false)}
-            />
-
-            {showInfoCreateTag &&
-                <p>
-                    crear un nuevo tag
-                </p>
-            }
+                        onTouchStart={() => setShowInfoCreateTag(true)}
+                        onTouchEnd={() => setShowInfoCreateTag(false)}
+                    />
+                </button>
+            </div>
 
             {showInfoTag &&
-                <p>
-                    arrastre el título de una nota para poder asignarle un tag
-                </p>
+                <aside className="TagList__showInfoTag">
+                    (i) Arrastre una Nota (<MdOutlineEventNote className="Navbar__showInfoTag__ReactICON" />) para asignarle un Tag.
+                </aside>
+            }
+
+            {showInfoCreateTag &&
+                <aside className="TagList__showInfoCreateTag">
+                    Crear un nuevo Tag (<CiShoppingTag className="Navbar__showInfoCreateTag__ReactICON" />).
+                </aside>
             }
 
             <Tags
@@ -104,9 +117,9 @@ export default function TagList() {
         {
             showTagDeleteWarning &&
             <WarningBlockToRemove
-                warningText={`se eliminará el Tag ${showOptionsTag?.name}.`}
-                option1Text={'cancelar'}
-                option2Text={'eliminar'}
+                warningText={`Se eliminará el Tag: ${showOptionsTag?.name}.`}
+                option1Text={'Cancelar'}
+                option2Text={'Eliminar'}
                 option1Fc={() => setShowTagDeleteWarning(false)}
                 option2Fc={() => {
                     if (!showOptionsTag) return;

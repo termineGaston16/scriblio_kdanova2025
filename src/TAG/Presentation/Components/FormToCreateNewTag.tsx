@@ -86,15 +86,15 @@ const FormToCreateNewTag: React.FC<Props> = ({ closeForm }) => {
 
             {
                 messageAlert &&
-                <span
+                <aside
                     className="FormToCreateNewTag__messageError"
-                >{messageAlert}</span>
+                >{messageAlert}</aside>
             }
             {
                 messageInfo &&
-                <p
+                <aside
                     className="FormToCreateNewTag__messageInfo"
-                >[i] {messageInfo}</p>
+                >[i] {messageInfo}</aside>
             }
             <button
                 className="FormToCreateNewTag__btnCreateNewTag"

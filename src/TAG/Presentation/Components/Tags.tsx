@@ -6,6 +6,9 @@ import { useDetermineTagToNote } from "../Hooks/useDetermineTagToNote";
 import { useIDTagParamContext } from "../Context/idTagParamContext";
 import { useWordSearchContext } from "../../../UI/TOOLBAR/Presentation/Context/WordSearchContext";
 
+import '../Styles/tags.css'
+import { FaTag } from "react-icons/fa";
+
 interface Props {
     tagListLocal: Tag_I[];
     lastItem: (node: HTMLElement | null) => void;
@@ -33,7 +36,7 @@ const Tags: React.FC<Props> = ({
     const rowVirtualizer = useVirtualizer({
         count: tagListLocal.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 100, // Altura de cada elemento,    
+        estimateSize: () => 50, // Altura de cada elemento,    
     });
 
     const {
@@ -49,6 +52,7 @@ const Tags: React.FC<Props> = ({
             idTag: idTag
         });
     }
+
     const [alertAsingTagInNote, setAlertAsingTagInNote] = useState<boolean>(false);
     useEffect(() => {
         if (typeof dataUseDetermineTagToNote === 'boolean' && dataUseDetermineTagToNote || !dataUseDetermineTagToNote) return;
@@ -60,26 +64,24 @@ const Tags: React.FC<Props> = ({
 
     return (<>
         <div
+            className="Tags_parentRef"
             ref={parentRef}
-            style={{
-                height: 600,
-                overflow: "auto",
-            }}
         >
             {/* 📌 Contenedor interno con altura dinámica */}
             <ul
+                className="Tags__listTags"
                 style={{
                     position: "relative",
-                    height: rowVirtualizer.getTotalSize(), // Calcula la altura total
+                    height: rowVirtualizer.getTotalSize(),
                     width: "100%",
-                    padding: 0,
+                    padding: 0, // Agregamos espacio entre los elementos
                     margin: 0,
-                    listStyle: "none"
+                    listStyle: "none",
                 }}
             >
                 {rowVirtualizer.getVirtualItems().map((virtualRow, index, array) => {
                     const isLast = index === array.length - 1;
-                    const { title, id } = tagListLocal[virtualRow.index];
+                    const { title, id, colorTag } = tagListLocal[virtualRow.index];
 
                     return (
                         <li
@@ -101,31 +103,40 @@ const Tags: React.FC<Props> = ({
                                 setShowLisSearch(false)
                             }}
 
+                            className="Tags__listTags__tag"
                             style={{
-                                position: "absolute", // 📌 Posiciona los elementos correctamente
+                                "--tag-bg-color": colorTag,
+                                position: "absolute",
                                 top: 0,
                                 left: 0,
                                 width: "100%",
-                                transform: `translateY(${virtualRow.start}px)`, // 📌 Mueve cada elemento a su posición correcta
-                            }}
+                                transform: `translateY(${virtualRow.start + index * 70}%)`,
+                            } as React.CSSProperties}
                         >
                             <span
+                                className="Tags__listTags__tag__title"
                                 style={{
-                                    border: "1px solid red",
-                                    display: "block",
-                                    padding: "10px",
+                                    color: `${colorTag}`
                                 }}
                             >
                                 {title}
                             </span>
+                            <FaTag
+                                style={{
+                                    color: `${colorTag}`
+                                }}
+                                className="Tags__listTags__tag__ReactICON" />
 
                             {showOptionsTag?.id === id && (
-                                <button
-                                    type="button"
-                                    onClick={() => setShowTagDeleteWarning(true)}
-                                >
-                                    <FiMinusCircle />
-                                </button>
+                                <div className="container_deleteTag">
+                                    <button
+                                        className="Tags__listTags__tag__deleteTag"
+                                        type="button"
+                                        onClick={() => setShowTagDeleteWarning(true)}
+                                    >
+                                        <FiMinusCircle className="Tags__listTags__tag__deleteTag__ReactICON" />
+                                    </button>
+                                </div>
                             )}
                         </li>
                     );
@@ -134,12 +145,13 @@ const Tags: React.FC<Props> = ({
         </div>
 
         {
-            alertAsingTagInNote &&
-            <div>
-                <span>{dataUseDetermineTagToNote}</span>
+            dataUseDetermineTagToNote &&
+            <div className="alertAsingTagInNote_containter">
+                <span className="alertAsingTagInNote_message">{dataUseDetermineTagToNote}</span>
                 <button
+                    className="alertAsingTagInNote_closeAlert"
                     onClick={() => setAlertAsingTagInNote(false)}
-                    type="button">Okey</button>
+                    type="button">De Acuerdo</button>
             </div>
         }
     </>);

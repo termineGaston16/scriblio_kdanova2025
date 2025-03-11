@@ -4,7 +4,7 @@ import { db } from "../../UI/Infraestructure/Firebase/firebase";
 import { DataBaseError, DataBaseSystemFailure } from "./tagError";
 import { Note_I } from "../../NOTES/Domain/note";
 
-export const LIMIT_TAGS = 2;
+export const LIMIT_TAGS = 6;
 export const MAX_TAGS = 50;
 
 {/* method: GET */ }
