@@ -1,0 +1,146 @@
+.FormToCreateNewTag {
+    position: fixed;
+
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+
+    z-index: 2;
+
+    background-color: rgba(0, 0, 0, 0.793);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: .3vw;
+}
+
+.FormToCreateNewTag::before {
+    content: '';
+    position: absolute;
+    background-color: rgb(15, 15, 15);
+    border-radius: 1vw;
+    border: 1px solid rgb(85, 0, 255);
+
+    width: 40vw;
+    min-width: 300px;
+    aspect-ratio: 16/9;
+    z-index: -1;
+}
+
+.FormToCreateNewTag__closeForm__container {
+    width: 25vw;
+    min-width: 270px;
+    text-align: end;
+}
+
+.FormToCreateNewTag__closeForm {
+    border: none;
+    background-color: rgba(255, 105, 180, 0);
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(0, 13, 255),
+            rgb(208, 0, 255),
+            rgb(255, 0, 30));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 900;
+
+    font-size: clamp(14px, 1.5vw, 1.5vw);
+    cursor: pointer;
+}
+
+.FormToCreateNewTag__titleInfo {
+    color: white;
+
+    font-size: clamp(18px, 2vw, 2vw);
+    text-shadow: 3px 3px 0px black;
+}
+
+.FormToCreateNewTag__labelNameTag,
+.FormToCreateNewTag__labelColorTag {
+
+
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(59, 69, 255),
+            rgb(208, 0, 255),
+            rgb(255, 0, 30));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    font-size: clamp(14px, 1.3vw, 1.3vw);
+    text-align: start;
+    width: 25vw;
+    min-width: 270px;
+    font-weight: 800;
+}
+
+.FormToCreateNewTag__nameTagInput {
+    width: 25vw;
+    min-width: 270px;
+
+    border: 1px solid aqua;
+    background-color: rgb(5, 5, 5);
+    font-size: clamp(14px, 1.3vw, 1.3vw);
+    font-family: 'Times New Roman', Times, serif;
+    padding: .5vw;
+
+    color: white;
+    outline: none;
+}
+
+.FormToCreateNewTag__colorTagInput {
+    width: 25vw;
+    height: 2vw;
+    min-width: 270px;
+    min-height: 25px;
+
+    border: 1px solid aqua;
+    background-color: rgba(255, 0, 0, 0);
+    cursor: pointer;
+}
+
+.FormToCreateNewTag__messageError,
+.FormToCreateNewTag__messageInfo {
+    width: 25vw;
+    min-width: 270px;
+
+    text-align: center;
+    white-space: pre-line;
+
+    position: absolute;
+}
+
+.FormToCreateNewTag__messageError {
+    color: rgb(255, 25, 25);
+    top: 5vw;
+}
+
+.FormToCreateNewTag__messageInfo {
+    color: yellow;
+    bottom: 5vw;
+}
+
+.FormToCreateNewTag__btnCreateNewTag {
+    border: 0px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: clamp(14px, 2vw, 2vw);
+    font-weight: 100;
+
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(59, 69, 255),
+            rgb(208, 0, 255),
+            rgb(255, 0, 30));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+
+    margin-top: 2vw;
+}
