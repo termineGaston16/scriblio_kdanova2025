@@ -120,6 +120,8 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 400;
     font-size: clamp(10px, 1.3vw, 1.3vw);
+
+    cursor: default;
 }
 
 .Navbar__listClass__class__Link__ReactICON {
@@ -143,6 +145,8 @@
     background: #e11c1c00;
     border-radius: 10px;
 }
+
+
 
 
 
@@ -181,4 +185,35 @@
 .Navbar__listClass__class:hover::after {
     width: 100%;
     opacity: 1;
+}
+
+
+
+
+/* DARK MODE */
+.darkMode .Navbar__infoICON {
+    color: rgb(0, 229, 255);
+}
+
+.darkMode .Navbar__listClass__class,
+.darkMode .class_DeleteNoteClass {
+    border: 1px solid rgb(0, 34, 255);
+}
+
+.darkMode .Navbar__listClass__class__Link__text,
+.darkMode .text_DeleteNoteClassText {
+    background: linear-gradient(10deg,
+            rgb(0, 255, 238),
+            rgb(0, 13, 255));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.darkMode .Navbar__listClass__class__Link__ReactICON {
+    color: rgb(0, 229, 255);
+}
+
+.darkMode .Navbar__listClass__class:hover {
+    border: 1px solid rgba(255, 255, 255, 0);
 }

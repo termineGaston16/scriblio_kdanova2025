@@ -3,7 +3,7 @@ import { BsFillInfoCircleFill } from "react-icons/bs";
 import { MdOutlineEventNote, MdOutlineNotes } from "react-icons/md";
 import { IoIosStarOutline } from "react-icons/io";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
-import { TiDeleteOutline, TiPinOutline } from "react-icons/ti";
+import { TiPinOutline } from "react-icons/ti";
 import { IoArchiveOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { useDetermineClassToNote } from "../../../../../../NOTES/Presentation/Hooks/useDetermineClassToNote";

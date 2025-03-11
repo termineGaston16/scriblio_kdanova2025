@@ -48,3 +48,13 @@
 
     text-align: center;
 }
+
+
+
+
+
+/* DARK MODE */
+
+.darkMode .Header {
+    background-color: rgb(19, 19, 19);
+}
