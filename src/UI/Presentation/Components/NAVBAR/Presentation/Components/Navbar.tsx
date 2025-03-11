@@ -83,7 +83,7 @@ export default function Navbar() {
                         to={'/'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >todas las listas</span>
+                        >Todas las Listas</span>
                         <MdOutlineNotes
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
@@ -107,7 +107,7 @@ export default function Navbar() {
                         to={'/favoritos'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >favoritos</span>
+                        >Favoritas</span>
                         <IoIosStarOutline
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
@@ -130,7 +130,7 @@ export default function Navbar() {
                         to={'/pendientes'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >pendientes</span>
+                        >Pendientes</span>
                         <FaCheck
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
@@ -153,7 +153,7 @@ export default function Navbar() {
                         to={'/completadas'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >completadas</span>
+                        >Completadas</span>
                         <FaCheckDouble
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
@@ -176,7 +176,7 @@ export default function Navbar() {
                         to={'/fijas'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >fijas</span>
+                        >Fijas</span>
                         <TiPinOutline
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
@@ -199,14 +199,14 @@ export default function Navbar() {
                         to={'/archivadas'}>
                         <span
                             className="Navbar__listClass__class__Link__text"
-                        >archivadas</span>
+                        >Archivadas</span>
                         <IoArchiveOutline
                             className="Navbar__listClass__class__Link__ReactICON"
                         />
                     </Link>
                 </li>
                 <li
-                    className="Navbar__listClass__class"
+                    className="class_DeleteNoteClass"
 
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDropNavbar(e, 'deleteNote')}
@@ -215,11 +215,8 @@ export default function Navbar() {
                 >
 
                     <span
-                        className="Navbar__listClass__class__Link__text"
-                    >borrar nota</span>
-                    <TiDeleteOutline
-                        className="Navbar__listClass__class__Link__ReactICON"
-                    />
+                        className="text_DeleteNoteClassText"
+                    >Borrar Nota</span>
                 </li>
             </ul>
         </nav>

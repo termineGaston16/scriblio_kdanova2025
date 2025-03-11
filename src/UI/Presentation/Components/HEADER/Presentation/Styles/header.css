@@ -3,12 +3,6 @@
     min-width: 106px;
 
     height: 100vh;
-
-    background-color: rgb(233, 238, 254);
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    flex-direction: column;
 }
 
 .Header__Link {
